@@ -1,0 +1,172 @@
+.pantalla {
+  display: grid;
+  grid-template-columns: 1.1fr 1fr;
+  min-height: 100vh;
+}
+
+/* ---------- Panel de presentación (izquierda) ---------- */
+.presentacion {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  padding: 40px 64px;
+  background: linear-gradient(160deg, var(--fiao-azul-900) 0%, #0f5c63 60%, var(--fiao-verde) 120%);
+  color: #fff;
+}
+.marca {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  font-size: 20px;
+  font-weight: 700;
+}
+.logo {
+  display: grid;
+  place-items: center;
+  width: 40px;
+  height: 40px;
+  border-radius: 10px;
+  background: rgba(255, 255, 255, 0.15);
+}
+.etiqueta {
+  display: inline-block;
+  margin-bottom: 20px;
+  padding: 6px 14px;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.15);
+  font-size: 14px;
+}
+.mensaje h1 {
+  max-width: 560px;
+  color: #fff;
+  font-size: clamp(34px, 3.4vw, 50px);
+  line-height: 1.15;
+}
+.mensaje p {
+  max-width: 480px;
+  margin-top: 18px;
+  color: #cfe3e6;
+  font-size: 18px;
+  line-height: 1.5;
+}
+.presentacion small {
+  color: #a9c4cc;
+  font-size: 14px;
+}
+
+/* ---------- Formulario (derecha) ---------- */
+.lado-formulario {
+  display: grid;
+  place-items: center;
+  padding: 40px 24px;
+}
+.caja {
+  width: 100%;
+  max-width: 460px;
+  padding: 44px 40px;
+  background: var(--fiao-superficie);
+  border: 1px solid var(--fiao-borde);
+  border-radius: 16px;
+  box-shadow: 0 12px 32px rgba(16, 24, 40, 0.08);
+}
+.caja h2 {
+  font-size: 30px;
+}
+.subtitulo {
+  margin: 8px 0 28px;
+  color: var(--fiao-texto-suave);
+  font-size: 16px;
+}
+.campo {
+  margin-bottom: 20px;
+}
+.campo label {
+  font-size: 15px;
+}
+.campo input {
+  padding: 14px 16px;
+  font-size: 16px;
+}
+.con-ojo {
+  position: relative;
+}
+.con-ojo input {
+  padding-right: 48px;
+}
+.ojo {
+  position: absolute;
+  right: 8px;
+  top: 50%;
+  transform: translateY(-50%);
+  display: grid;
+  place-items: center;
+  padding: 6px;
+  border: 0;
+  border-radius: 6px;
+  background: none;
+  color: var(--fiao-texto-suave);
+  cursor: pointer;
+}
+.ojo:hover {
+  color: var(--fiao-verde-oscuro);
+  background: var(--fiao-fondo);
+}
+.alerta {
+  margin-bottom: 18px;
+  padding: 12px 14px;
+  border-radius: 8px;
+  background: #fdecec;
+  color: #b42318;
+  font-size: 15px;
+}
+.ingresar {
+  width: 100%;
+  padding: 14px;
+  font-size: 16px;
+}
+.pie {
+  margin-top: 20px;
+  text-align: center;
+}
+
+/* ---------- Tablet y celular: el panel de color pasa arriba y se achica ---------- */
+@media (max-width: 900px) {
+  /* Toda la pantalla lleva el degradado y la tarjeta blanca flota encima */
+  .pantalla {
+    grid-template-columns: 1fr;
+    grid-template-rows: auto 1fr;
+    background: linear-gradient(170deg, var(--fiao-azul-900) 0%, #0f5c63 55%, var(--fiao-verde) 130%);
+  }
+  .presentacion {
+    gap: 14px;
+    padding: 28px 20px 8px;
+    background: none;
+  }
+  .marca {
+    font-size: 17px;
+  }
+  .logo {
+    width: 34px;
+    height: 34px;
+  }
+  .etiqueta,
+  .mensaje p,
+  .presentacion small {
+    display: none;
+  }
+  .mensaje h1 {
+    font-size: 24px;
+  }
+  .lado-formulario {
+    place-items: start center;
+    padding: 24px 16px;
+  }
+  .caja {
+    padding: 28px 22px;
+    border: 0;
+    box-shadow: 0 16px 40px rgba(0, 0, 0, 0.25);
+  }
+  .caja h2 {
+    font-size: 24px;
+  }
+}

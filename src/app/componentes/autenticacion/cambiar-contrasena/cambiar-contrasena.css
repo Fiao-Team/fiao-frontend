@@ -1,0 +1,73 @@
+/* El componente no ocupa lugar donde se coloca: solo muestra su ventana al abrirse. */
+:host {
+  display: contents;
+}
+dialog {
+  width: min(440px, calc(100vw - 32px));
+  padding: 28px;
+  border: 0;
+  border-radius: 14px;
+  color: var(--fiao-texto);
+}
+dialog::backdrop {
+  background: rgba(11, 31, 58, 0.45);
+}
+.titulo {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 12px;
+  margin-bottom: 20px;
+}
+.titulo h3 {
+  font-size: 22px;
+}
+/* Campo de contraseña con el ícono del ojo adentro (igual que en el login) */
+.con-ojo {
+  position: relative;
+}
+.con-ojo input {
+  padding-right: 44px;
+}
+.ojo {
+  position: absolute;
+  right: 6px;
+  top: 50%;
+  transform: translateY(-50%);
+  display: grid;
+  place-items: center;
+  padding: 6px;
+  border: 0;
+  border-radius: 6px;
+  background: none;
+  color: var(--fiao-texto-suave);
+  cursor: pointer;
+}
+.ojo:hover {
+  color: var(--fiao-verde-oscuro);
+  background: var(--fiao-fondo);
+}
+.acciones {
+  margin-top: 6px;
+}
+.alerta {
+  margin-bottom: 16px;
+  padding: 10px 12px;
+  border-radius: 8px;
+  background: #fdecec;
+  color: #b42318;
+  font-size: 14px;
+}
+.acciones {
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
+}
+.listo h3 {
+  font-size: 22px;
+  margin-bottom: 8px;
+}
+.listo p {
+  margin: 0 0 20px;
+  color: var(--fiao-texto-suave);
+}

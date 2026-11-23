@@ -1,0 +1,81 @@
+<dialog #dialogo>
+  @if (listo()) {
+    <div class="listo">
+      <h3>Contraseña actualizada</h3>
+      <p>La próxima vez que ingreses, usa tu contraseña nueva.</p>
+      <button type="button" class="btn btn-primario" (click)="cerrar()">Entendido</button>
+    </div>
+  } @else {
+    <div class="titulo">
+      <h3>Cambiar contraseña</h3>
+      <app-como-usar titulo="Cambiar contraseña" [pasos]="pasos" variante="enlace" etiqueta="¿Cómo usar?" />
+    </div>
+
+    <form [formGroup]="formulario" (ngSubmit)="guardar()" novalidate>
+      <div class="campo">
+        <label for="clave-actual">
+          Contraseña actual
+          <app-ayuda texto="La que usas hoy para ingresar." />
+        </label>
+        <div class="con-ojo">
+          <input id="clave-actual" formControlName="actual" autocomplete="current-password"
+                 [type]="ver().actual ? 'text' : 'password'" />
+          <button type="button" class="ojo" (click)="alternar('actual')"
+                  [attr.aria-label]="ver().actual ? 'Ocultar contraseña' : 'Mostrar contraseña'">
+            <app-icono [nombre]="ver().actual ? 'ojo-cerrado' : 'ojo'" />
+          </button>
+        </div>
+        @if (formulario.controls.actual.touched && formulario.controls.actual.invalid) {
+          <span class="error">Ingresa tu contraseña actual</span>
+        }
+      </div>
+
+      <div class="campo">
+        <label for="clave-nueva">
+          Contraseña nueva
+          <app-ayuda [texto]="'Mínimo ' + largoMinimo + ' caracteres y distinta de la actual.'" />
+        </label>
+        <div class="con-ojo">
+          <input id="clave-nueva" formControlName="nueva" autocomplete="new-password"
+                 [type]="ver().nueva ? 'text' : 'password'" />
+          <button type="button" class="ojo" (click)="alternar('nueva')"
+                  [attr.aria-label]="ver().nueva ? 'Ocultar contraseña' : 'Mostrar contraseña'">
+            <app-icono [nombre]="ver().nueva ? 'ojo-cerrado' : 'ojo'" />
+          </button>
+        </div>
+        @if (formulario.controls.nueva.touched && formulario.controls.nueva.invalid) {
+          <span class="error">Debe tener al menos {{ largoMinimo }} caracteres</span>
+        }
+      </div>
+
+      <div class="campo">
+        <label for="clave-repetir">
+          Repite la contraseña nueva
+          <app-ayuda texto="Escríbela otra vez para evitar errores de tipeo." />
+        </label>
+        <div class="con-ojo">
+          <input id="clave-repetir" formControlName="repetir" autocomplete="new-password"
+                 [type]="ver().repetir ? 'text' : 'password'" />
+          <button type="button" class="ojo" (click)="alternar('repetir')"
+                  [attr.aria-label]="ver().repetir ? 'Ocultar contraseña' : 'Mostrar contraseña'">
+            <app-icono [nombre]="ver().repetir ? 'ojo-cerrado' : 'ojo'" />
+          </button>
+        </div>
+        @if (formulario.controls.repetir.touched && formulario.hasError('noCoinciden')) {
+          <span class="error">Las contraseñas no coinciden</span>
+        }
+      </div>
+
+      @if (error()) {
+        <div class="alerta" role="alert">{{ error() }}</div>
+      }
+
+      <div class="acciones">
+        <button type="button" class="btn btn-secundario" (click)="cerrar()">Cancelar</button>
+        <button type="submit" class="btn btn-primario" [disabled]="enviando()">
+          {{ enviando() ? 'Guardando…' : 'Guardar' }}
+        </button>
+      </div>
+    </form>
+  }
+</dialog>

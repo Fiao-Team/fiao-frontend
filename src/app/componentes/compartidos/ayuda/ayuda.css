@@ -1,0 +1,38 @@
+:host {
+  position: relative;
+  display: inline-flex;
+}
+.icono {
+  width: 18px;
+  height: 18px;
+  padding: 0;
+  border-radius: 50%;
+  border: 1px solid var(--fiao-texto-suave);
+  background: transparent;
+  color: var(--fiao-texto-suave);
+  font-size: 11px;
+  font-weight: 700;
+  line-height: 1;
+  cursor: pointer;
+}
+.icono:hover,
+.icono[aria-expanded='true'] {
+  border-color: var(--fiao-verde);
+  color: var(--fiao-verde);
+}
+.globo {
+  position: absolute;
+  left: 24px;
+  top: 50%;
+  transform: translateY(-50%);
+  z-index: 5;
+  width: max-content;
+  max-width: 240px;
+  padding: 6px 10px;
+  border-radius: 8px;
+  background: var(--fiao-verde);
+  color: #fff;
+  font-size: 12px;
+  font-weight: 500;
+  line-height: 1.35;
+}

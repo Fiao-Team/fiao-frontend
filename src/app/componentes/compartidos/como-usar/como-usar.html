@@ -1,0 +1,13 @@
+<button type="button" (click)="dialogo.showModal()"
+        [class]="variante() === 'enlace' ? 'enlace' : 'btn btn-secundario'">
+  {{ etiqueta() }}
+</button>
+<dialog #dialogo (click)="cerrarSiFondo($event)">
+  <h3>{{ titulo() }}</h3>
+  <ol>
+    @for (paso of pasos(); track $index) {
+      <li>{{ paso }}</li>
+    }
+  </ol>
+  <button type="button" class="btn btn-primario" (click)="dialogo.close()">Entendido</button>
+</dialog>

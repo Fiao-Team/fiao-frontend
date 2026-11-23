@@ -1,0 +1,12 @@
+<app-menu-lateral [abierto]="menuAbierto()" (navego)="menuAbierto.set(false)" />
+
+@if (menuAbierto()) {
+  <div class="fondo-menu" (click)="menuAbierto.set(false)"></div>
+}
+
+<div class="principal">
+  <app-cabecera (abrirMenu)="menuAbierto.set(true)" />
+  <main class="contenido">
+    <router-outlet />
+  </main>
+</div>
