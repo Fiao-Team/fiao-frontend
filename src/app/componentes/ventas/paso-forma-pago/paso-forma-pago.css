@@ -1,0 +1,119 @@
+.columnas {
+  display: grid;
+  grid-template-columns: minmax(0, 1.6fr) minmax(280px, 1fr);
+  gap: 18px;
+  align-items: start;
+}
+.izquierda {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+.bloque {
+  padding: 16px 18px;
+  border: 1px solid var(--fiao-borde);
+  border-radius: 12px;
+  background: var(--fiao-superficie);
+}
+.bloque h3 {
+  margin-bottom: 12px;
+  font-size: 16px;
+}
+.items,
+.lineas {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+.items li {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 0;
+  border-top: 1px solid var(--fiao-borde);
+}
+.nombre {
+  flex: 1;
+  min-width: 140px;
+}
+.nombre small,
+.suave,
+.fecha-compra {
+  color: var(--fiao-texto-suave);
+}
+.selector {
+  display: inline-flex;
+  border: 1px solid var(--fiao-borde);
+  border-radius: 8px;
+  overflow: hidden;
+}
+.selector button {
+  padding: 6px 12px;
+  border: 0;
+  background: var(--fiao-superficie);
+  font: inherit;
+  font-size: 13px;
+  cursor: pointer;
+}
+.selector button.activo {
+  background: var(--fiao-verde);
+  color: #fff;
+}
+.fija {
+  font-size: 13px;
+  color: var(--fiao-texto-suave);
+}
+.cuotas {
+  max-width: 220px;
+  margin: 14px 0 0;
+}
+.lineas li {
+  display: flex;
+  justify-content: space-between;
+  font-size: 14px;
+  color: var(--fiao-texto-suave);
+}
+dl {
+  margin: 12px 0;
+}
+dl div {
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 4px 0;
+  font-size: 14px;
+}
+dd {
+  margin: 0;
+  font-weight: 600;
+  white-space: nowrap;
+}
+.fuerte {
+  font-size: 16px;
+}
+.grupo.cargando {
+  opacity: 0.6;
+}
+.resumen {
+  position: sticky;
+  top: 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+.resumen p {
+  margin: 0;
+}
+.totales .fuerte dd {
+  font-size: 20px;
+}
+
+@media (max-width: 900px) {
+  .columnas {
+    grid-template-columns: 1fr;
+  }
+  .resumen {
+    position: static;
+  }
+}

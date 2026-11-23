@@ -1,0 +1,43 @@
+<!-- Al cerrar con Esc se trata como "Salir" -->
+<dialog #dialogo (cancel)="$event.preventDefault(); elegir('salir')">
+  @if (venta(); as v) {
+    <div class="icono-ok"><app-icono nombre="check" [tamano]="28" /></div>
+    <h3>¡Venta registrada exitosamente!</h3>
+    <p class="sub">Se generaron estas compras con sus intereses y su cronograma.</p>
+
+    <ul class="tickets">
+      @for (g of v.grupos; track g.transaccion_id) {
+        <li>
+          <div class="fila">
+            <strong>Ticket #{{ g.transaccion_id }} · {{ g.modalidad === 'FIN_DE_MES' ? 'Compra a fin de mes' : 'Compra en ' + g.cuotas + ' cuotas' }}</strong>
+            <strong>{{ f.dinero(v.moneda, g.total) }}</strong>
+          </div>
+          <div class="fila suave">
+            <span>{{ productos(g.lineas) }}</span>
+            <span class="etiqueta-estado">Pendiente</span>
+          </div>
+          <div class="fila suave">
+            @if (g.modalidad === 'FIN_DE_MES') {
+              <span>Pago el {{ f.fecha(v.fecha_pago) }}</span>
+            } @else {
+              <span>{{ g.cuotas }} cuotas de {{ f.dinero(v.moneda, g.R) }}/mes</span>
+            }
+            <span>TCEA {{ f.tasa(g.tcea) }}</span>
+          </div>
+        </li>
+      }
+    </ul>
+
+    @if (v.aviso) {
+      <div class="aviso aviso-info">{{ v.aviso }}</div>
+    }
+    <div class="aviso aviso-exito">
+      Límite de crédito actualizado. Disponible restante: <strong>&nbsp;{{ f.dinero(v.moneda, v.disponible_despues) }}</strong>
+    </div>
+
+    <div class="acciones">
+      <button type="button" class="btn btn-primario" (click)="elegir('nueva')">Iniciar nueva venta</button>
+      <button type="button" class="btn btn-secundario" (click)="elegir('salir')">Salir</button>
+    </div>
+  }
+</dialog>
