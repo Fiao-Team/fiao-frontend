@@ -1,0 +1,78 @@
+<div class="campo">
+  <label for="buscar-producto">
+    Buscar productos
+    <app-ayuda texto="Solo aparecen productos en la moneda del cliente." />
+  </label>
+  <input id="buscar-producto" type="search" placeholder="Buscar por nombre o marca"
+         autocomplete="off" (input)="alEscribir($any($event.target).value)" />
+</div>
+
+@if (error()) {
+  <div class="aviso aviso-error" role="alert">{{ error() }}</div>
+}
+
+<ul class="productos">
+  @for (p of productos(); track p.producto_id) {
+    <li [class.en-carrito]="cantidadEnCarrito(p) > 0">
+      <div>
+        <strong>{{ p.nombre }}</strong>
+        <span>{{ dinero(p.moneda, p.precio_lista) }}
+          · {{ p.forma_venta_credito === 'AMBAS' ? 'Fin de mes o cuotas'
+             : p.forma_venta_credito === 'EN_MESES' ? 'En cuotas' : 'Fin de mes' }}</span>
+      </div>
+      <button type="button" class="boton-mas" [attr.aria-label]="'Agregar ' + p.nombre" (click)="agregar.emit(p)">
+        <app-icono nombre="mas" [tamano]="18" />
+      </button>
+    </li>
+  } @empty {
+    <li class="vacio">No hay productos en esta moneda.</li>
+  }
+</ul>
+
+<section class="carrito">
+  <h3>Carrito · {{ carrito().length }} {{ carrito().length === 1 ? 'producto' : 'productos' }}</h3>
+  @if (carrito().length) {
+    <div class="tabla-contenedor">
+      <table class="tabla">
+        <thead>
+          <tr>
+            <th>Producto</th>
+            <th>
+              Cantidad
+              <app-ayuda texto="Unidades compradas (mayor que cero; acepta hasta 3 decimales, ej. 1.5 kg)." />
+            </th>
+            <th class="num">Precio de lista</th>
+            <th class="num">Subtotal</th>
+            <th></th>
+          </tr>
+        </thead>
+        <tbody>
+          @for (item of carrito(); track item.producto.producto_id; let i = $index) {
+            <tr>
+              <td>{{ item.producto.nombre }}</td>
+              <td>
+                <input class="cantidad" type="number" min="0.001" step="1" [value]="item.cantidad"
+                       [attr.aria-label]="'Cantidad de ' + item.producto.nombre"
+                       (input)="alCambiarCantidad(i, $any($event.target).value)" />
+                @if (item.cantidad <= 0) {
+                  <span class="error">Debe ser mayor que 0</span>
+                }
+              </td>
+              <td class="num">{{ dinero(item.producto.moneda, item.producto.precio_lista) }}</td>
+              <td class="num">{{ dinero(item.producto.moneda, subtotal(item)) }}</td>
+              <td>
+                <button type="button" class="boton-quitar" [attr.aria-label]="'Quitar ' + item.producto.nombre"
+                        (click)="quitar.emit(i)">
+                  <app-icono nombre="basura" [tamano]="18" />
+                </button>
+              </td>
+            </tr>
+          }
+        </tbody>
+      </table>
+    </div>
+  } @else {
+    <p class="vacio">Agrega productos con el botón +.</p>
+  }
+  <p class="total">Total: <strong>{{ dinero(cliente().moneda, total()) }}</strong></p>
+</section>

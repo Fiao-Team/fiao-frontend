@@ -130,3 +130,69 @@ h3 {
   margin: 4px 0 0;
   color: var(--fiao-texto-suave);
 }
+
+/* ---------- Avisos (error, información, éxito) ---------- */
+.aviso {
+  display: flex;
+  gap: 10px;
+  align-items: flex-start;
+  padding: 12px 14px;
+  border-radius: 10px;
+  border: 1px solid transparent;
+  font-size: 14px;
+  line-height: 1.4;
+}
+.aviso strong {
+  display: block;
+}
+.aviso-error {
+  background: #fdecec;
+  border-color: #f7c5c5;
+  color: #b42318;
+}
+.aviso-info {
+  background: #eaf2fd;
+  border-color: #c7dbf7;
+  color: #1d4f91;
+}
+.aviso-exito {
+  background: var(--fiao-verde-claro);
+  border-color: #b7e8e1;
+  color: var(--fiao-verde-oscuro);
+}
+
+/* ---------- Tablas ---------- */
+.tabla {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 14px;
+}
+.tabla th {
+  padding: 10px 12px;
+  background: var(--fiao-fondo);
+  color: var(--fiao-texto-suave);
+  font-weight: 600;
+  text-align: left;
+}
+.tabla td {
+  padding: 10px 12px;
+  border-top: 1px solid var(--fiao-borde);
+}
+.tabla .num {
+  text-align: right;
+  font-variant-numeric: tabular-nums;
+}
+.tabla-contenedor {
+  overflow-x: auto;
+}
+
+/* ---------- Etiquetas pequeñas ---------- */
+.etiqueta-estado {
+  display: inline-block;
+  padding: 2px 10px;
+  border-radius: 999px;
+  background: #fff4e0;
+  color: #a86200;
+  font-size: 12px;
+  font-weight: 600;
+}

@@ -1,0 +1,119 @@
+<div class="columnas">
+  <div class="izquierda">
+    <!-- Forma de pago de cada producto -->
+    <section class="bloque">
+      <h3>Forma de pago de cada producto</h3>
+      <ul class="items">
+        @for (item of carrito(); track item.producto.producto_id; let i = $index) {
+          <li>
+            <span class="nombre">{{ item.producto.nombre }} <small>× {{ item.cantidad }}</small></span>
+            @if (permitidas[item.producto.forma_venta_credito].length > 1) {
+              <span class="selector" role="group" [attr.aria-label]="'Forma de pago de ' + item.producto.nombre">
+                @for (m of permitidas[item.producto.forma_venta_credito]; track m) {
+                  <button type="button" [class.activo]="item.modalidad === m"
+                          (click)="modalidadCambio.emit({ indice: i, modalidad: m })">{{ nombreModalidad(m) }}</button>
+                }
+              </span>
+              <app-ayuda texto="Elige cómo pagará el cliente este producto: en un solo pago o en cuotas." />
+            } @else {
+              <span class="fija">{{ nombreModalidad(item.modalidad) }}</span>
+            }
+          </li>
+        }
+      </ul>
+
+      @if (hayEnMeses()) {
+        <div class="campo cuotas">
+          <label for="cuotas">
+            Número de cuotas
+            <app-ayuda [texto]="'Cuotas mensuales; máximo ' + cliente().plazo_max_meses + ' según el crédito del cliente.'" />
+          </label>
+          <select id="cuotas" [value]="cuotas()" (change)="cuotasCambio.emit(+$any($event.target).value)">
+            @for (n of opcionesCuotas(); track n) {
+              <option [value]="n" [selected]="n === cuotas()">{{ n }} {{ n === 1 ? 'cuota' : 'cuotas' }}</option>
+            }
+          </select>
+        </div>
+      }
+    </section>
+
+    @if (error()) {
+      <div class="aviso aviso-error" role="alert">{{ error() }}</div>
+    }
+
+    <!-- Compras que se van a generar (calculadas por el backend) -->
+    @if (previa(); as p) {
+      @for (g of p.grupos; track g.modalidad) {
+        <section class="bloque grupo" [class.cargando]="cargando()">
+          <h3>{{ g.modalidad === 'FIN_DE_MES' ? 'Compra a fin de mes' : 'Compra en ' + g.cuotas + ' cuotas' }}</h3>
+          <ul class="lineas">
+            @for (l of g.lineas; track l.producto_id) {
+              <li><span>{{ l.nombre }} × {{ l.cantidad }}</span><span>{{ f.dinero(p.moneda, l.subtotal) }}</span></li>
+            }
+          </ul>
+          <dl>
+            <div><dt>Monto de la compra (C)</dt><dd>{{ f.dinero(p.moneda, g.C) }}</dd></div>
+            @if (g.modalidad === 'FIN_DE_MES') {
+              <div><dt>Interés por {{ g.dias }} días (TEP {{ f.tasa(g.tep) }})</dt><dd>{{ f.dinero(p.moneda, g.interes) }}</dd></div>
+              <div class="fuerte"><dt>Pago único el {{ f.fecha(p.fecha_pago) }}</dt><dd>{{ f.dinero(p.moneda, g.total) }}</dd></div>
+            } @else {
+              <div><dt>Días de gracia (TEP {{ f.tasa(g.tep) }})</dt><dd>{{ g.dias }} días</dd></div>
+              <div><dt>Deuda capitalizada (C')</dt><dd>{{ f.dinero(p.moneda, g.C_prima) }}</dd></div>
+              <div><dt>TEM</dt><dd>{{ f.tasa(g.tem) }}</dd></div>
+              <div class="fuerte"><dt>{{ g.cuotas }} cuotas de</dt><dd>{{ f.dinero(p.moneda, g.R) }}</dd></div>
+              <div><dt>Total en cuotas</dt><dd>{{ f.dinero(p.moneda, g.total) }}</dd></div>
+            }
+            <div><dt>TCEA</dt><dd>{{ f.tasa(g.tcea) }}</dd></div>
+          </dl>
+          @if (g.modalidad === 'EN_MESES') {
+            <button type="button" class="btn btn-secundario" (click)="verCronograma.emit(g)">
+              <app-icono nombre="calendario" [tamano]="18" /> Ver cronograma
+            </button>
+          }
+        </section>
+      }
+    }
+  </div>
+
+  <!-- Resumen de registro (Fig. 15, 18 y 19) -->
+  <aside class="bloque resumen">
+    <h3>Resumen de registro</h3>
+    @if (previa(); as p) {
+      <p class="fecha-compra">{{ f.fechaHora(p.fecha_compra) }} · TEA {{ f.tasa(p.tea) }}</p>
+
+      @if (p.posterior_al_corte) {
+        <div class="aviso aviso-info">
+          <app-icono nombre="calendario" [tamano]="18" />
+          <div><strong>{{ p.aviso }}</strong>Entra al corte del {{ f.fechaHora(p.fecha_corte) }}.</div>
+        </div>
+      } @else {
+        <div class="aviso aviso-info">
+          <app-icono nombre="calendario" [tamano]="18" />
+          <div><strong>Entra al corte del {{ f.fecha(p.fecha_corte) }}</strong>Se paga el {{ f.fecha(p.fecha_pago) }}.</div>
+        </div>
+      }
+
+      <p>Se {{ p.grupos.length === 1 ? 'registrará 1 compra' : 'registrarán ' + p.grupos.length + ' compras' }}.</p>
+      <dl class="totales">
+        <div><dt>Monto base del carrito</dt><dd>{{ f.dinero(p.moneda, p.total_capital) }}</dd></div>
+        <div class="fuerte"><dt>Total a pagar (incluye interés)</dt><dd>{{ f.dinero(p.moneda, p.total_a_pagar) }}</dd></div>
+      </dl>
+
+      @if (p.aprobado) {
+        <div class="aviso aviso-exito">
+          <app-icono nombre="check" [tamano]="18" />
+          <div><strong>Crédito aprobado</strong>
+            El monto ({{ f.dinero(p.moneda, p.total_capital) }}) está dentro del disponible ({{ f.dinero(p.moneda, p.disponible) }}).</div>
+        </div>
+      } @else {
+        <div class="aviso aviso-error" role="alert">
+          <app-icono nombre="alerta" [tamano]="18" />
+          <div><strong>{{ p.mensaje_limite }}</strong>
+            El monto de la compra ({{ f.dinero(p.moneda, p.total_capital) }}) supera el disponible ({{ f.dinero(p.moneda, p.disponible) }}).</div>
+        </div>
+      }
+    } @else if (cargando()) {
+      <p class="suave">Calculando…</p>
+    }
+  </aside>
+</div>

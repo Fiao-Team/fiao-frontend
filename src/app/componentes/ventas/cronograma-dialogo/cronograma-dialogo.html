@@ -1,0 +1,49 @@
+<dialog #dialogo (click)="$event.target === dialogo && cerrar()">
+  @if (grupo(); as g) {
+    <h3>Cronograma de pagos (método francés)</h3>
+    <p class="sub">{{ g.cuotas }} cuotas mensuales</p>
+
+    <dl class="datos">
+      <div><dt>Monto de la compra</dt><dd>{{ f.dinero(moneda(), g.C) }}</dd></div>
+      <div><dt>Días de gracia</dt><dd>{{ g.dias }} días</dd></div>
+      <div><dt>Deuda capitalizada</dt><dd>{{ f.dinero(moneda(), g.C_prima) }}</dd></div>
+      <div><dt>TEM aplicada</dt><dd>{{ f.tasa(g.tem) }}</dd></div>
+      <div><dt>TCEA</dt><dd>{{ f.tasa(g.tcea) }}</dd></div>
+    </dl>
+
+    <div class="tabla-contenedor">
+      <table class="tabla">
+        <thead>
+          <tr>
+            <th>N.°</th><th>Vencimiento</th><th class="num">Saldo inicial</th><th class="num">Interés</th>
+            <th class="num">Amortización</th><th class="num">Cuota</th><th class="num">Saldo final</th>
+          </tr>
+        </thead>
+        <tbody>
+          @for (c of g.cronograma; track c.numero) {
+            <tr>
+              <td>{{ c.numero }}</td>
+              <td>{{ f.fecha(c.vencimiento) }}</td>
+              <td class="num">{{ f.dinero(moneda(), c.saldo_inicial) }}</td>
+              <td class="num">{{ f.dinero(moneda(), c.interes) }}</td>
+              <td class="num">{{ f.dinero(moneda(), c.amortizacion) }}</td>
+              <td class="num">{{ f.dinero(moneda(), c.cuota) }}</td>
+              <td class="num">{{ f.dinero(moneda(), c.saldo_final) }}</td>
+            </tr>
+          }
+        </tbody>
+        <tfoot>
+          <tr>
+            <td colspan="3"><strong>Total</strong></td>
+            <td class="num"><strong>{{ f.dinero(moneda(), totalIntereses(g)) }}</strong></td>
+            <td class="num"><strong>{{ f.dinero(moneda(), g.C_prima) }}</strong></td>
+            <td class="num"><strong>{{ f.dinero(moneda(), g.total) }}</strong></td>
+            <td></td>
+          </tr>
+        </tfoot>
+      </table>
+    </div>
+
+    <button type="button" class="btn btn-primario ancho" (click)="cerrar()">Cerrar</button>
+  }
+</dialog>
