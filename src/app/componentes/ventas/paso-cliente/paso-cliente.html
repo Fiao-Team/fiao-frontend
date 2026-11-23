@@ -1,0 +1,45 @@
+<div class="campo">
+  <label for="buscar-cliente">
+    Cliente
+    <app-ayuda texto="Persona que realizará la compra al crédito. Se puede buscar por DNI o nombre." />
+  </label>
+  <div class="con-icono">
+    <app-icono nombre="buscar" [tamano]="18" />
+    <input id="buscar-cliente" type="search" placeholder="Buscar por nombre o DNI"
+           autocomplete="off" (input)="alEscribir($any($event.target).value)" />
+  </div>
+</div>
+
+@if (error()) {
+  <div class="aviso aviso-error" role="alert">{{ error() }}</div>
+}
+
+<ul class="resultados">
+  @for (c of resultados(); track c.cliente_id) {
+    <li>
+      <button type="button" [class.elegido]="cliente()?.cliente_id === c.cliente_id" (click)="elegir(c)">
+        <strong>{{ c.nombres_apellidos }}</strong>
+        <span>DNI {{ c.dni }} · {{ c.moneda === 'PEN' ? 'Soles' : 'Dólares' }}</span>
+      </button>
+    </li>
+  } @empty {
+    <li class="vacio">No hay clientes activos que coincidan.</li>
+  }
+</ul>
+
+@if (cliente(); as c) {
+  <div class="tarjeta-cliente">
+    <h3>{{ c.nombres_apellidos }}</h3>
+    <dl>
+      <div><dt>Moneda</dt><dd>{{ c.moneda === 'PEN' ? 'Soles' : 'Dólares' }}</dd></div>
+      <div><dt>Disponible</dt><dd>{{ formato.dinero(c.moneda, c.disponible) }}</dd></div>
+      <div><dt>Límite</dt><dd>{{ formato.dinero(c.moneda, c.limite_credito) }}</dd></div>
+      <div><dt>Corte</dt><dd>{{ formato.fechaHora(c.fecha_corte) }}</dd></div>
+      <div><dt>Pago</dt><dd>{{ formato.fecha(c.fecha_pago) }}</dd></div>
+      <div><dt>Máximo de cuotas</dt><dd>{{ c.plazo_max_meses }}</dd></div>
+    </dl>
+    @if (c.posterior_al_corte) {
+      <p class="nota">Ya pasó el corte de este mes: una compra hoy entra al corte del {{ formato.fecha(c.fecha_corte) }}.</p>
+    }
+  </div>
+}

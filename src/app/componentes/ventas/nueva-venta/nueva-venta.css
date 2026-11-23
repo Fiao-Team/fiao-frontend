@@ -1,0 +1,40 @@
+.pestanas {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 8px;
+  margin-bottom: 16px;
+}
+.pestanas button {
+  padding: 10px;
+  border: 1px solid var(--fiao-borde);
+  border-radius: 10px;
+  background: var(--fiao-superficie);
+  color: var(--fiao-texto-suave);
+  font: inherit;
+  cursor: pointer;
+}
+.pestanas button.activa {
+  border-color: var(--fiao-verde);
+  background: var(--fiao-verde);
+  color: #fff;
+  font-weight: 600;
+}
+.pestanas button:disabled {
+  cursor: not-allowed;
+  opacity: 0.6;
+}
+.botones {
+  display: flex;
+  justify-content: space-between;
+  gap: 10px;
+  margin-top: 20px;
+  padding-top: 16px;
+  border-top: 1px solid var(--fiao-borde);
+}
+
+@media (max-width: 600px) {
+  .pestanas button {
+    padding: 8px 4px;
+    font-size: 13px;
+  }
+}

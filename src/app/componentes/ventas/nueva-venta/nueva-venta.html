@@ -1,0 +1,51 @@
+<div class="encabezado-pagina">
+  <div>
+    <h1>Nueva venta</h1>
+    <p>Registra una compra al crédito en tres pasos</p>
+  </div>
+  <app-como-usar titulo="Nueva venta" [pasos]="pasos" />
+</div>
+
+<nav class="pestanas" aria-label="Pasos de la venta">
+  <button type="button" [class.activa]="paso() === 1" (click)="irA(1)">1. Cliente</button>
+  <button type="button" [class.activa]="paso() === 2" [disabled]="!puedeIrAProductos()" (click)="irA(2)">2. Productos</button>
+  <button type="button" [class.activa]="paso() === 3" [disabled]="!puedeIrAFormaPago()" (click)="irA(3)">3. Forma de pago</button>
+</nav>
+
+<div class="tarjeta">
+  @switch (paso()) {
+    @case (1) {
+      <app-paso-cliente [cliente]="cliente()" (elegido)="elegirCliente($event)" />
+    }
+    @case (2) {
+      <app-paso-productos [cliente]="cliente()!" [carrito]="carrito()"
+        (agregar)="agregarProducto($event)" (cambiarCantidad)="cambiarCantidad($event)"
+        (quitar)="quitarProducto($event)" />
+    }
+    @case (3) {
+      <app-paso-forma-pago
+        [cliente]="cliente()!" [carrito]="carrito()" [cuotas]="cuotas()"
+        [previa]="previa()" [cargando]="cargandoPrevia()" [error]="errorPrevia()"
+        (modalidadCambio)="cambiarModalidad($event)" (cuotasCambio)="cambiarCuotas($event)"
+        (verCronograma)="abrirCronograma($event)" />
+    }
+  }
+
+  <div class="botones">
+    <button type="button" class="btn btn-secundario" [disabled]="paso() === 1" (click)="irA($any(paso() - 1))">
+      Atrás
+    </button>
+    @if (paso() === 1) {
+      <button type="button" class="btn btn-primario" [disabled]="!puedeIrAProductos()" (click)="irA(2)">Continuar</button>
+    } @else if (paso() === 2) {
+      <button type="button" class="btn btn-primario" [disabled]="!puedeIrAFormaPago()" (click)="irA(3)">Continuar</button>
+    } @else {
+      <button type="button" class="btn btn-primario" [disabled]="!puedeConfirmar()" (click)="confirmar()">
+        {{ registrando() ? 'Registrando…' : 'Confirmar venta' }}
+      </button>
+    }
+  </div>
+</div>
+
+<app-cronograma-dialogo />
+<app-venta-registrada-dialogo (nuevaVenta)="nuevaVenta()" (salir)="salir()" />

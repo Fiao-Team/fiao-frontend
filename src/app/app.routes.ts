@@ -3,6 +3,7 @@ import { Routes } from '@angular/router';
 import { EnConstruccion } from './componentes/compartidos/en-construccion/en-construccion';
 import { Layout } from './componentes/compartidos/layout/layout';
 import { IniciarSesion } from './componentes/autenticacion/iniciar-sesion/iniciar-sesion';
+import { NuevaVenta } from './componentes/ventas/nueva-venta/nueva-venta';
 import { soloRol, soloSinSesion } from './servicios/autenticacion-guard';
 
 /** Crea una ruta provisional (pantalla "En construcción"). */
@@ -33,7 +34,7 @@ export const routes: Routes = [
       pendiente('inicio', 'Inicio', 'la Fig. 6'),
       pendiente('productos', 'Productos', 'las Fig. 7 y 8'),
       pendiente('clientes', 'Clientes', 'las Fig. 9 a 12'),
-      pendiente('nueva-venta', 'Nueva venta', 'las Fig. 13 a 19'),
+      { path: 'nueva-venta', component: NuevaVenta, title: 'Nueva venta · Fiao' },
       pendiente('registrar-pago', 'Registrar pago', 'las Fig. 20 a 22'),
       pendiente('listados', 'Listados de pago', 'las Fig. 23 y 24'),
       pendiente('reportes', 'Reportes', 'las Fig. 25 a 27'),
