@@ -1,0 +1,62 @@
+:host {
+  display: block;
+  width: 240px;
+  flex-shrink: 0;
+  background: var(--fiao-azul-900);
+  color: #cdd6e3;
+  padding: 20px 14px;
+}
+.marca {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 28px;
+  color: #fff;
+}
+.marca small {
+  display: block;
+  color: #8fa1b8;
+  font-size: 12px;
+}
+.logo {
+  display: grid;
+  place-items: center;
+  width: 34px;
+  height: 34px;
+  border-radius: 8px;
+  background: var(--fiao-verde);
+  font-weight: 700;
+}
+nav {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+nav a {
+  padding: 10px 12px;
+  border-radius: 8px;
+  color: inherit;
+  text-decoration: none;
+}
+nav a:hover {
+  background: var(--fiao-azul-800);
+}
+nav a.activo {
+  background: var(--fiao-azul-800);
+  color: #fff;
+  font-weight: 600;
+}
+
+/* Celular: el menú es un panel que entra desde la izquierda */
+@media (max-width: 800px) {
+  :host {
+    position: fixed;
+    inset: 0 auto 0 0;
+    z-index: 20;
+    transform: translateX(-100%);
+    transition: transform 0.2s;
+  }
+  :host(.abierto) {
+    transform: none;
+  }
+}

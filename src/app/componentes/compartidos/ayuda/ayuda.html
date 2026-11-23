@@ -1,0 +1,5 @@
+<button type="button" class="icono" [attr.aria-expanded]="abierto()"
+        aria-label="Ayuda" (click)="abierto.set(!abierto())">?</button>
+@if (abierto()) {
+  <span class="globo" role="tooltip">{{ texto() }}</span>
+}

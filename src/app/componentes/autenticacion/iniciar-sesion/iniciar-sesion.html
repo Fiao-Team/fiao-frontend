@@ -1,0 +1,63 @@
+<div class="pantalla">
+  <section class="presentacion">
+    <div class="marca"><span class="logo">F</span> Fiao</div>
+    <div class="mensaje">
+      <span class="etiqueta">Simple, seguro y cercano</span>
+      <h1>El cuaderno de fiados, ahora digital y sin errores.</h1>
+      <p>Todo lo que tu negocio necesita para llevar cuentas claras con tus clientes de siempre.</p>
+    </div>
+    <small>Hecho para los negocios que mueven el barrio.</small>
+  </section>
+
+  <section class="lado-formulario">
+    <div class="caja">
+      <h2>Bienvenido de vuelta</h2>
+      <p class="subtitulo">Ingresa tus datos para continuar</p>
+
+      <form [formGroup]="formulario" (ngSubmit)="ingresar()" novalidate>
+        <div class="campo">
+          <label for="username">
+            Usuario
+            <app-ayuda texto="Usuario que te entregó tu tienda o el administrador." />
+          </label>
+          <input id="username" formControlName="username" autocomplete="username"
+                 placeholder="Ingresa tu usuario" />
+          @if (formulario.controls.username.touched && formulario.controls.username.invalid) {
+            <span class="error">Ingresa tu usuario</span>
+          }
+        </div>
+
+        <div class="campo">
+          <label for="password">
+            Contraseña
+            <app-ayuda texto="Distingue mayúsculas y minúsculas." />
+          </label>
+          <div class="con-ojo">
+            <input id="password" formControlName="password" autocomplete="current-password"
+                   [type]="verClave() ? 'text' : 'password'" placeholder="Ingresa tu contraseña" />
+            <button type="button" class="ojo" (click)="verClave.set(!verClave())"
+                    [attr.aria-label]="verClave() ? 'Ocultar contraseña' : 'Mostrar contraseña'">
+              <app-icono [nombre]="verClave() ? 'ojo-cerrado' : 'ojo'" />
+            </button>
+          </div>
+          @if (formulario.controls.password.touched && formulario.controls.password.invalid) {
+            <span class="error">Ingresa tu contraseña</span>
+          }
+        </div>
+
+        @if (error()) {
+          <div class="alerta" role="alert">{{ error() }}</div>
+        }
+
+        <button class="btn btn-primario ingresar" type="submit" [disabled]="enviando()">
+          {{ enviando() ? 'Ingresando…' : 'Ingresar' }}
+        </button>
+      </form>
+
+      <div class="pie">
+        <app-como-usar titulo="Inicio de sesión" [pasos]="pasos"
+                       variante="enlace" etiqueta="¿Cómo ingresar?" />
+      </div>
+    </div>
+  </section>
+</div>

@@ -1,0 +1,132 @@
+/* Estilos globales de Fiao. Los colores salen de los mockups (Fig. 1 a 34). */
+
+:root {
+  /* Barra lateral y textos oscuros */
+  --fiao-azul-900: #0b1f3a;
+  --fiao-azul-800: #12305a;
+  /* Color principal (botones, acentos) */
+  --fiao-verde: #14b8a6;
+  --fiao-verde-oscuro: #0f8f81;
+  --fiao-verde-claro: #e6f7f5;
+  /* Estados */
+  --fiao-rojo: #e5484d;
+  --fiao-ambar: #f5a524;
+  /* Fondos y bordes */
+  --fiao-fondo: #f3f6fa;
+  --fiao-superficie: #ffffff;
+  --fiao-borde: #e3e8ef;
+  --fiao-texto: #1b2433;
+  --fiao-texto-suave: #6b7686;
+
+  --fiao-radio: 10px;
+  --fiao-sombra: 0 1px 3px rgba(16, 24, 40, 0.08);
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html,
+body {
+  margin: 0;
+  height: 100%;
+  background: var(--fiao-fondo);
+  color: var(--fiao-texto);
+  font-family: 'Inter', system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
+  font-size: 15px;
+}
+
+h1,
+h2,
+h3 {
+  margin: 0;
+  color: var(--fiao-azul-900);
+}
+
+/* ---------- Botones ---------- */
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  padding: 10px 16px;
+  border: 1px solid transparent;
+  border-radius: 8px;
+  font: inherit;
+  font-weight: 600;
+  cursor: pointer;
+  text-decoration: none;
+}
+.btn-primario {
+  background: var(--fiao-verde);
+  color: #fff;
+}
+.btn-primario:hover:not(:disabled) {
+  background: var(--fiao-verde-oscuro);
+}
+.btn-primario:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+.btn-secundario {
+  background: var(--fiao-superficie);
+  border-color: var(--fiao-borde);
+  color: var(--fiao-texto);
+}
+.btn-secundario:hover {
+  background: var(--fiao-fondo);
+}
+
+/* ---------- Formularios ---------- */
+.campo {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  margin-bottom: 16px;
+}
+.campo label {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-weight: 600;
+  font-size: 14px;
+}
+.campo input,
+.campo select {
+  width: 100%;
+  padding: 10px 12px;
+  border: 1px solid var(--fiao-borde);
+  border-radius: 8px;
+  font: inherit;
+  background: var(--fiao-superficie);
+}
+.campo input:focus,
+.campo select:focus {
+  outline: 2px solid var(--fiao-verde);
+  outline-offset: -1px;
+}
+.campo .error {
+  color: var(--fiao-rojo);
+  font-size: 13px;
+}
+
+/* ---------- Tarjetas y encabezado de página ---------- */
+.tarjeta {
+  background: var(--fiao-superficie);
+  border: 1px solid var(--fiao-borde);
+  border-radius: var(--fiao-radio);
+  box-shadow: var(--fiao-sombra);
+  padding: 20px;
+}
+.encabezado-pagina {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 12px;
+  margin-bottom: 20px;
+}
+.encabezado-pagina p {
+  margin: 4px 0 0;
+  color: var(--fiao-texto-suave);
+}

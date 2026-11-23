@@ -1,0 +1,15 @@
+<div class="marca">
+  <span class="logo">F</span>
+  <div>
+    <strong>Fiao</strong>
+    <small>Tu crédito, en orden</small>
+  </div>
+</div>
+
+<nav>
+  @for (opcion of opciones(); track opcion.ruta) {
+    <a [routerLink]="opcion.ruta" routerLinkActive="activo" (click)="navego.emit()">
+      {{ opcion.texto }}
+    </a>
+  }
+</nav>

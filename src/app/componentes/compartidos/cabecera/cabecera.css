@@ -1,0 +1,112 @@
+:host {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 12px;
+  padding: 10px 24px;
+  background: var(--fiao-superficie);
+  border-bottom: 1px solid var(--fiao-borde);
+}
+
+/* ---------- Botón y menú del usuario ---------- */
+.usuario {
+  position: relative;
+}
+.boton-usuario {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 6px 8px;
+  border: 0;
+  border-radius: 10px;
+  background: none;
+  color: var(--fiao-texto-suave);
+  font: inherit;
+  cursor: pointer;
+}
+.boton-usuario:hover,
+.boton-usuario[aria-expanded='true'] {
+  background: var(--fiao-fondo);
+}
+.datos {
+  text-align: right;
+}
+.datos strong {
+  display: block;
+  color: var(--fiao-texto);
+}
+.datos small {
+  display: block;
+  font-size: 12px;
+}
+.avatar {
+  display: grid;
+  place-items: center;
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  background: var(--fiao-verde);
+  color: #fff;
+  font-weight: 700;
+  font-size: 13px;
+}
+.menu-usuario {
+  position: absolute;
+  right: 0;
+  top: calc(100% + 6px);
+  z-index: 30;
+  min-width: 220px;
+  padding: 6px;
+  background: var(--fiao-superficie);
+  border: 1px solid var(--fiao-borde);
+  border-radius: 10px;
+  box-shadow: 0 10px 28px rgba(16, 24, 40, 0.12);
+}
+.menu-usuario button {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  width: 100%;
+  padding: 10px 12px;
+  border: 0;
+  border-radius: 8px;
+  background: none;
+  color: var(--fiao-texto);
+  font: inherit;
+  text-align: left;
+  cursor: pointer;
+}
+.menu-usuario button:hover {
+  background: var(--fiao-fondo);
+}
+.menu-usuario .peligro {
+  color: var(--fiao-rojo);
+}
+
+/* ---------- Botón del menú lateral (solo celular) ---------- */
+.boton-menu {
+  display: none;
+}
+
+@media (max-width: 800px) {
+  :host {
+    justify-content: space-between;
+    padding: 8px 16px;
+  }
+  .boton-menu {
+    display: grid;
+    place-items: center;
+    padding: 6px;
+    border: 0;
+    border-radius: 8px;
+    background: none;
+    color: var(--fiao-azul-900);
+    cursor: pointer;
+  }
+  .boton-menu:hover {
+    background: var(--fiao-fondo);
+  }
+  .datos {
+    display: none;
+  }
+}
