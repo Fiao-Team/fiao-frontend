@@ -14,20 +14,28 @@
 
 <!-- Tarjetas KPI (Fig. 2) -->
 <section class="kpis" aria-label="Resumen de tiendas">
-  <article class="tarjeta kpi">
+  <article class="tarjeta kpi kpi-total">
     <span class="kpi-etiqueta">Total de tiendas</span>
     <strong class="kpi-valor">{{ resumen().total }}</strong>
     <span class="kpi-nota">En toda la plataforma</span>
   </article>
-  <article class="tarjeta kpi kpi-activas">
-    <span class="kpi-etiqueta">Tiendas activas</span>
-    <strong class="kpi-valor">{{ resumen().activas }}</strong>
-    <span class="kpi-nota">Operando normalmente</span>
+  <article class="tarjeta kpi kpi-con-icono kpi-activas">
+    <span class="kpi-circulo">
+      <app-icono nombre="check" [tamano]="20" />
+    </span>
+    <div>
+      <strong class="kpi-valor">{{ resumen().activas }}</strong>
+      <span class="kpi-etiqueta">Tiendas activas</span>
+    </div>
   </article>
-  <article class="tarjeta kpi kpi-inactivas">
-    <span class="kpi-etiqueta">Tiendas inactivas</span>
-    <strong class="kpi-valor">{{ resumen().inactivas }}</strong>
-    <span class="kpi-nota">Dadas de baja temporalmente</span>
+  <article class="tarjeta kpi kpi-con-icono kpi-inactivas">
+    <span class="kpi-circulo">
+      <app-icono nombre="baja" [tamano]="20" />
+    </span>
+    <div>
+      <strong class="kpi-valor">{{ resumen().inactivas }}</strong>
+      <span class="kpi-etiqueta">Tiendas inactivas</span>
+    </div>
   </article>
 </section>
 
