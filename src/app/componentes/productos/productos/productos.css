@@ -65,6 +65,14 @@
   color: var(--fiao-texto-suave);
 }
 
+.tabla tbody tr {
+  transition: background-color 0.12s ease;
+}
+
+.tabla tbody tr:hover {
+  background: #f8fafd;
+}
+
 .celda-producto {
   display: flex;
   align-items: center;

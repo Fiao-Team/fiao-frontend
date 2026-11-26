@@ -14,25 +14,32 @@
   font-weight: 700;
   line-height: 1;
   cursor: pointer;
+  transition: border-color 0.15s ease, color 0.15s ease, background-color 0.15s ease;
 }
 .icono:hover,
 .icono[aria-expanded='true'] {
   border-color: var(--fiao-verde);
-  color: var(--fiao-verde);
+  color: var(--fiao-verde-oscuro);
+  background: var(--fiao-verde-claro);
 }
 .globo {
   position: absolute;
-  left: 24px;
-  top: 50%;
-  transform: translateY(-50%);
-  z-index: 5;
+  left: 0;
+  bottom: calc(100% + 8px);
+  z-index: 20;
   width: max-content;
-  max-width: 240px;
-  padding: 6px 10px;
+  max-width: min(240px, 70vw);
+  padding: 8px 11px;
   border-radius: 8px;
-  background: var(--fiao-verde);
+  background: var(--fiao-azul-900);
   color: #fff;
   font-size: 12px;
   font-weight: 500;
-  line-height: 1.35;
+  line-height: 1.4;
+  white-space: normal;
+  box-shadow: 0 8px 20px rgba(11, 31, 58, 0.22);
+}
+.globo.derecha {
+  left: auto;
+  right: 0;
 }
