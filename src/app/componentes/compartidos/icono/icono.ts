@@ -3,7 +3,8 @@ import { Component, input } from '@angular/core';
 /** Íconos disponibles. Para agregar uno: sumarlo aquí y su dibujo en icono.html. */
 export type NombreIcono =
   | 'ojo' | 'ojo-cerrado' | 'menu' | 'salir' | 'llave' | 'flecha-abajo'
-  | 'buscar' | 'mas' | 'quitar' | 'check' | 'alerta' | 'calendario' | 'basura';
+  | 'buscar' | 'mas' | 'quitar' | 'check' | 'alerta' | 'calendario' | 'basura'
+  | 'editar' | 'baja' | 'activar' | 'paquete';
 
 /**
  * Ícono en SVG (dibujos de Lucide, https://lucide.dev, licencia ISC).
