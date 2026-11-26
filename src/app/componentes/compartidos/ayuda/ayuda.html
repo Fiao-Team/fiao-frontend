@@ -1,5 +1,5 @@
 <button type="button" class="icono" [attr.aria-expanded]="abierto()"
-        aria-label="Ayuda" (click)="abierto.set(!abierto())">?</button>
+        aria-label="Ayuda" (click)="alternar()">?</button>
 @if (abierto()) {
-  <span class="globo" role="tooltip">{{ texto() }}</span>
+  <span class="globo" [class.derecha]="alinearDerecha()" role="tooltip">{{ texto() }}</span>
 }
