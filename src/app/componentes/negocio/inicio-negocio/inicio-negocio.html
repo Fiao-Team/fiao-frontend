@@ -1,0 +1,140 @@
+<div class="encabezado-pagina">
+  <div>
+    <h1>{{ datos()?.nombre_comercial || 'Inicio' }}</h1>
+    <p>Resumen general de cartera, vencimientos y mora de tu negocio</p>
+  </div>
+  <div class="acciones-cabecera">
+    <app-como-usar titulo="Inicio del negocio" [pasos]="pasos" />
+    <a class="btn btn-primario" routerLink="/negocio/nueva-venta">
+      <app-icono nombre="mas" [tamano]="18" />
+      Nueva venta
+    </a>
+  </div>
+</div>
+
+@if (error()) {
+  <div class="aviso aviso-error mensaje-pagina" role="alert">
+    <app-icono nombre="alerta" [tamano]="18" />
+    <span>{{ error() }}</span>
+  </div>
+}
+
+@if (cargando()) {
+  <div class="tarjeta estado-carga">Cargando resumen del negocio…</div>
+} @else if (datos(); as d) {
+  <!-- Tarjetas KPI (Fig. 6) — nunca se mezclan PEN y USD -->
+  <section class="kpis" aria-label="Indicadores del negocio">
+    <article class="tarjeta kpi kpi-hero">
+      <span class="kpi-etiqueta">Total por cobrar</span>
+      <strong class="kpi-valor">{{ monto('PEN', d.total_por_cobrar_pen) }}</strong>
+      @if (esPositivo(d.total_por_cobrar_usd)) {
+        <span class="kpi-usd">{{ monto('USD', d.total_por_cobrar_usd) }}</span>
+      }
+      <span class="kpi-nota">{{ d.clientes_activos }} {{ d.clientes_activos === 1 ? 'cliente activo' : 'clientes activos' }}</span>
+    </article>
+
+    <article class="tarjeta kpi">
+      <span class="kpi-etiqueta">Clientes en mora</span>
+      <strong class="kpi-valor" [class.valor-mora]="d.clientes_en_mora_count > 0">
+        {{ d.clientes_en_mora_count }}
+      </strong>
+      <span class="kpi-nota">
+        {{ d.clientes_en_mora_count === 0 ? 'Sin atrasos registrados' : 'Con listados vencidos' }}
+      </span>
+    </article>
+
+    <article class="tarjeta kpi">
+      <span class="kpi-etiqueta">Vencen esta semana</span>
+      <strong class="kpi-valor">{{ d.vencen_esta_semana_count }}</strong>
+      <span class="kpi-nota">
+        {{ monto('PEN', d.vencen_esta_semana_pen) }}
+        @if (esPositivo(d.vencen_esta_semana_usd)) {
+          · {{ monto('USD', d.vencen_esta_semana_usd) }}
+        }
+      </span>
+    </article>
+
+    <article class="tarjeta kpi">
+      <span class="kpi-etiqueta">Crédito otorgado este mes</span>
+      <strong class="kpi-valor">{{ monto('PEN', d.credito_este_mes_pen) }}</strong>
+      @if (esPositivo(d.credito_este_mes_usd)) {
+        <span class="kpi-usd-suave">{{ monto('USD', d.credito_este_mes_usd) }}</span>
+      }
+      <span class="kpi-nota">{{ d.ventas_este_mes_count }} {{ d.ventas_este_mes_count === 1 ? 'venta' : 'ventas' }} en el mes</span>
+    </article>
+  </section>
+
+  <!-- Panel principal: Próximos vencimientos + Clientes en mora -->
+  <section class="rejilla-principal">
+    <article class="tarjeta">
+      <div class="cabecera-tarjeta">
+        <div>
+          <h2>Próximos vencimientos</h2>
+          <p class="sub">Ordenados por prioridad (primero en mora, luego fecha de pago más cercana)</p>
+        </div>
+        <a class="enlace-ver" routerLink="/negocio/clientes">Ver clientes</a>
+      </div>
+
+      @if (d.proximos_vencimientos.length === 0) {
+        <p class="vacio">No hay vencimientos pendientes en este momento.</p>
+      } @else {
+        <div class="tabla-contenedor">
+          <table class="tabla">
+            <thead>
+              <tr>
+                <th>Cliente</th>
+                <th>Fecha de pago</th>
+                <th class="num">Monto</th>
+                <th>Situación</th>
+              </tr>
+            </thead>
+            <tbody>
+              @for (v of d.proximos_vencimientos; track v.cliente_id) {
+                <tr>
+                  <td><strong>{{ v.nombres_apellidos }}</strong></td>
+                  <td>{{ fecha(v.fecha_pago) }}</td>
+                  <td class="num"><strong>{{ monto(v.moneda, v.monto) }}</strong></td>
+                  <td>
+                    @if (v.situacion === 'EN_MORA') {
+                      <span class="badge mora">En mora ({{ v.dias_mora }} d)</span>
+                    } @else {
+                      <span class="badge deuda">Con deuda</span>
+                    }
+                  </td>
+                </tr>
+              }
+            </tbody>
+          </table>
+        </div>
+      }
+    </article>
+
+    <article class="tarjeta">
+      <div class="cabecera-tarjeta">
+        <div>
+          <h2>Clientes en mora</h2>
+          <p class="sub">Ordenados por mayor cantidad de días de atraso</p>
+        </div>
+      </div>
+
+      @if (d.clientes_en_mora.length === 0) {
+        <div class="sin-mora">
+          <app-icono nombre="check" [tamano]="22" />
+          <p>Todos tus clientes están al día.</p>
+        </div>
+      } @else {
+        <ul class="lista-mora">
+          @for (m of d.clientes_en_mora; track m.cliente_id) {
+            <li>
+              <div>
+                <strong>{{ m.nombres_apellidos }}</strong>
+                <span class="sub">{{ m.dias_atraso }} {{ m.dias_atraso === 1 ? 'día' : 'días' }} de atraso</span>
+              </div>
+              <strong class="monto-mora">{{ monto(m.moneda, m.monto_vencido) }}</strong>
+            </li>
+          }
+        </ul>
+      }
+    </article>
+  </section>
+}
