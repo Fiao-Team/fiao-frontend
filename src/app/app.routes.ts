@@ -4,6 +4,9 @@ import { EnConstruccion } from './componentes/compartidos/en-construccion/en-con
 import { Layout } from './componentes/compartidos/layout/layout';
 import { IniciarSesion } from './componentes/autenticacion/iniciar-sesion/iniciar-sesion';
 import { Clientes } from './componentes/clientes/clientes/clientes';
+import { InicioNegocioComponente } from './componentes/negocio/inicio-negocio/inicio-negocio';
+import { Productos } from './componentes/productos/productos/productos';
+import { Tiendas } from './componentes/tiendas/tiendas/tiendas';
 import { NuevaVenta } from './componentes/ventas/nueva-venta/nueva-venta';
 import { soloRol, soloSinSesion } from './servicios/autenticacion-guard';
 
@@ -23,7 +26,10 @@ export const routes: Routes = [
     path: 'admin',
     component: Layout,
     canActivate: [soloRol('ADMIN_SISTEMA')],
-    children: [pendiente('tiendas', 'Tiendas', 'las Fig. 2 a 5'), { path: '', redirectTo: 'tiendas', pathMatch: 'full' }],
+    children: [
+      { path: 'tiendas', component: Tiendas, title: 'Tiendas · Fiao' },
+      { path: '', redirectTo: 'tiendas', pathMatch: 'full' },
+    ],
   },
 
   // Administrador del negocio (Fig. 6 a 27)
@@ -32,8 +38,8 @@ export const routes: Routes = [
     component: Layout,
     canActivate: [soloRol('ADMIN_NEGOCIO')],
     children: [
-      pendiente('inicio', 'Inicio', 'la Fig. 6'),
-      pendiente('productos', 'Productos', 'las Fig. 7 y 8'),
+      { path: 'inicio', component: InicioNegocioComponente, title: 'Inicio · Fiao' },
+      { path: 'productos', component: Productos, title: 'Productos · Fiao' },
       { path: 'clientes', component: Clientes, title: 'Clientes · Fiao' },
       { path: 'nueva-venta', component: NuevaVenta, title: 'Nueva venta · Fiao' },
       pendiente('registrar-pago', 'Registrar pago', 'las Fig. 20 a 22'),

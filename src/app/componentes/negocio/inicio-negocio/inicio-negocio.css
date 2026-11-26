@@ -1,0 +1,203 @@
+.acciones-cabecera {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 10px;
+}
+
+.mensaje-pagina {
+  margin-bottom: 16px;
+}
+
+.estado-carga {
+  text-align: center;
+  color: var(--fiao-texto-suave);
+  padding: 36px 20px;
+}
+
+.kpis {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 16px;
+  margin-bottom: 20px;
+}
+
+.kpi {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.kpi-hero {
+  background: linear-gradient(135deg, var(--fiao-azul-900) 0%, #0d6e6e 100%);
+  border-color: transparent;
+  color: #fff;
+}
+
+.kpi-hero .kpi-etiqueta,
+.kpi-hero .kpi-nota {
+  color: rgba(255, 255, 255, 0.82);
+}
+
+.kpi-hero .kpi-valor {
+  color: #fff;
+}
+
+.kpi-etiqueta {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--fiao-texto-suave);
+}
+
+.kpi-valor {
+  font-size: 26px;
+  line-height: 1.15;
+  color: var(--fiao-azul-900);
+  font-variant-numeric: tabular-nums;
+}
+
+.valor-mora {
+  color: var(--fiao-rojo);
+}
+
+.kpi-usd {
+  font-size: 14px;
+  font-weight: 600;
+  color: rgba(255, 255, 255, 0.92);
+  font-variant-numeric: tabular-nums;
+}
+
+.kpi-usd-suave {
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--fiao-azul-800);
+  font-variant-numeric: tabular-nums;
+}
+
+.kpi-nota {
+  font-size: 12px;
+  color: var(--fiao-texto-suave);
+}
+
+.rejilla-principal {
+  display: grid;
+  grid-template-columns: minmax(0, 1.7fr) minmax(260px, 1fr);
+  gap: 16px;
+  align-items: start;
+}
+
+.cabecera-tarjeta {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 12px;
+  margin-bottom: 14px;
+}
+
+.cabecera-tarjeta h2 {
+  font-size: 17px;
+}
+
+.sub {
+  display: block;
+  margin: 2px 0 0;
+  font-size: 12.5px;
+  color: var(--fiao-texto-suave);
+}
+
+.enlace-ver {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--fiao-verde-oscuro);
+  text-decoration: none;
+  white-space: nowrap;
+}
+
+.enlace-ver:hover {
+  text-decoration: underline;
+}
+
+.vacio {
+  margin: 20px 0 8px;
+  text-align: center;
+  color: var(--fiao-texto-suave);
+}
+
+.badge {
+  display: inline-block;
+  padding: 3px 10px;
+  border-radius: 999px;
+  font-size: 12px;
+  font-weight: 600;
+  white-space: nowrap;
+}
+
+.badge.mora {
+  background: #fdecec;
+  color: #b42318;
+}
+
+.badge.deuda {
+  background: #fff4e0;
+  color: #a86200;
+}
+
+.sin-mora {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  padding: 24px 12px;
+  border-radius: 10px;
+  background: var(--fiao-verde-claro);
+  color: var(--fiao-verde-oscuro);
+  text-align: center;
+}
+
+.sin-mora p {
+  margin: 0;
+  font-weight: 600;
+  font-size: 14px;
+}
+
+.lista-mora {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.lista-mora li {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 12px 14px;
+  border: 1px solid #f7c5c5;
+  border-radius: 10px;
+  background: #fff8f8;
+}
+
+.monto-mora {
+  color: #b42318;
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+}
+
+@media (max-width: 1080px) {
+  .kpis {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .rejilla-principal {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 600px) {
+  .kpis {
+    grid-template-columns: 1fr;
+  }
+}

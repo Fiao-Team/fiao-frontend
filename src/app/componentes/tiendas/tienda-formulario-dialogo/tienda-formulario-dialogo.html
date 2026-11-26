@@ -1,0 +1,209 @@
+<dialog #dialogo>
+  <div class="titulo">
+    <div>
+      <h3>{{ esEdicion() ? 'Editar tienda' : 'Registrar nueva tienda' }}</h3>
+      <p class="subtitulo">Completa la información del negocio y su dueño</p>
+    </div>
+    <app-como-usar titulo="Registrar tienda" [pasos]="pasos" variante="enlace" etiqueta="¿Cómo usar?" />
+  </div>
+
+  <form [formGroup]="formulario" (ngSubmit)="guardar()" novalidate>
+    <h4 class="seccion">Datos de la tienda</h4>
+    <div class="rejilla">
+      <div class="campo">
+        <label for="t-nombre">
+          Nombre comercial
+          <app-ayuda texto="Nombre que verán los clientes." />
+        </label>
+        <input id="t-nombre" formControlName="nombre_comercial" maxlength="60"
+               placeholder="Ej. Bodega Don Pepe" (input)="limpiarError('nombre_comercial')" />
+        @if (erroresCampo()['nombre_comercial']) {
+          <span class="error">{{ erroresCampo()['nombre_comercial'] }}</span>
+        }
+      </div>
+
+      <div class="campo">
+        <label for="t-ruc">
+          RUC
+          <app-ayuda texto="11 dígitos, empieza con 10 o 20." />
+        </label>
+        <input id="t-ruc" formControlName="ruc" maxlength="11" inputmode="numeric"
+               placeholder="Ej. 20123456789" (input)="limpiarError('ruc')" />
+        @if (erroresCampo()['ruc']) {
+          <span class="error">{{ erroresCampo()['ruc'] }}</span>
+        }
+      </div>
+
+      <div class="campo completo">
+        <label for="t-direccion">
+          Dirección
+          <app-ayuda texto="Ubicación exacta del local." />
+        </label>
+        <input id="t-direccion" formControlName="direccion" maxlength="200"
+               placeholder="Ej. Av. Universitaria 1200" (input)="limpiarError('direccion')" />
+        @if (erroresCampo()['direccion']) {
+          <span class="error">{{ erroresCampo()['direccion'] }}</span>
+        }
+      </div>
+
+      <div class="campo">
+        <label for="t-distrito">
+          Distrito
+          <app-ayuda texto="Distrito donde funciona la tienda." />
+        </label>
+        <input id="t-distrito" formControlName="distrito" maxlength="60"
+               placeholder="Ej. Los Olivos" (input)="limpiarError('distrito')" />
+        @if (erroresCampo()['distrito']) {
+          <span class="error">{{ erroresCampo()['distrito'] }}</span>
+        }
+      </div>
+
+      <div class="campo">
+        <label for="t-telefono">
+          Teléfono
+          <app-ayuda texto="9 dígitos." />
+        </label>
+        <input id="t-telefono" formControlName="telefono" maxlength="9" inputmode="numeric"
+               placeholder="Ej. 987654321" (input)="limpiarError('telefono')" />
+        @if (erroresCampo()['telefono']) {
+          <span class="error">{{ erroresCampo()['telefono'] }}</span>
+        }
+      </div>
+
+      <div class="campo">
+        <label for="t-giro">
+          Giro
+          <app-ayuda texto="Actividad principal del negocio." />
+        </label>
+        <select id="t-giro" formControlName="giro" (change)="limpiarError('giro')">
+          <option value="">Selecciona un giro</option>
+          @for (g of giros(); track g) {
+            <option [value]="g">{{ g }}</option>
+          }
+        </select>
+        @if (erroresCampo()['giro']) {
+          <span class="error">{{ erroresCampo()['giro'] }}</span>
+        }
+      </div>
+
+      <div class="campo">
+        <label for="t-moneda">
+          Moneda por defecto
+          <app-ayuda texto="Moneda principal con la que opera la tienda." />
+        </label>
+        <select id="t-moneda" formControlName="moneda_defecto">
+          <option value="PEN">Soles (PEN)</option>
+          <option value="USD">Dólares (USD)</option>
+        </select>
+      </div>
+
+      <div class="campo completo">
+        <label for="t-logo">
+          Logo (URL opcional)
+          <app-ayuda texto="Aparecerá en los estados de cuenta en PDF." />
+        </label>
+        <input id="t-logo" formControlName="logo_url" maxlength="255"
+               placeholder="https://ejemplo.com/logo.png" />
+      </div>
+    </div>
+
+    <h4 class="seccion">Datos del dueño</h4>
+    <div class="rejilla">
+      <div class="campo completo">
+        <label for="t-dueno">
+          Nombres y apellidos
+          <app-ayuda texto="Nombre completo del dueño." />
+        </label>
+        <input id="t-dueno" formControlName="dueno_nombres" maxlength="80"
+               placeholder="Ej. María Torres" (input)="limpiarError('dueno_nombres')" />
+        @if (erroresCampo()['dueno_nombres']) {
+          <span class="error">{{ erroresCampo()['dueno_nombres'] }}</span>
+        }
+      </div>
+
+      <div class="campo">
+        <label for="t-dni">
+          DNI
+          <app-ayuda texto="8 dígitos." />
+        </label>
+        <input id="t-dni" formControlName="dueno_dni" maxlength="8" inputmode="numeric"
+               placeholder="Ej. 40123456" (input)="limpiarError('dueno_dni')" />
+        @if (erroresCampo()['dueno_dni']) {
+          <span class="error">{{ erroresCampo()['dueno_dni'] }}</span>
+        }
+      </div>
+
+      <div class="campo">
+        <label for="t-email">
+          Correo
+          <app-ayuda texto="Correo para avisos importantes." />
+        </label>
+        <input id="t-email" type="email" formControlName="dueno_email" maxlength="100"
+               placeholder="dueno@tienda.pe" (input)="limpiarError('dueno_email')" />
+        @if (erroresCampo()['dueno_email']) {
+          <span class="error">{{ erroresCampo()['dueno_email'] }}</span>
+        }
+      </div>
+
+      @if (!esEdicion()) {
+        <div class="campo">
+          <label for="t-user">
+            Usuario
+            <app-ayuda texto="Con este nombre entrará al sistema. Sin espacios." />
+          </label>
+          <input id="t-user" formControlName="username" maxlength="20" autocomplete="off"
+                 placeholder="Ej. sanjose" (input)="limpiarError('username')" />
+          @if (erroresCampo()['username']) {
+            <span class="error">{{ erroresCampo()['username'] }}</span>
+          }
+        </div>
+
+        <div class="campo">
+          <label for="t-pass">
+            Contraseña temporal
+            <app-ayuda texto="El dueño deberá cambiarla en su primer ingreso." />
+          </label>
+          <div class="fila-clave">
+            <div class="con-ojo">
+              <input id="t-pass" formControlName="password" autocomplete="new-password"
+                     [type]="verClave() ? 'text' : 'password'" placeholder="Mínimo 8 caracteres"
+                     (input)="limpiarError('password')" />
+              <button type="button" class="ojo" (click)="verClave.set(!verClave())"
+                      [attr.aria-label]="verClave() ? 'Ocultar contraseña' : 'Mostrar contraseña'">
+                <app-icono [nombre]="verClave() ? 'ojo-cerrado' : 'ojo'" [tamano]="18" />
+              </button>
+            </div>
+            <button type="button" class="btn btn-secundario btn-generar" (click)="generarClave()">
+              Generar
+            </button>
+          </div>
+          @if (erroresCampo()['password']) {
+            <span class="error">{{ erroresCampo()['password'] }}</span>
+          }
+        </div>
+      } @else {
+        <div class="campo completo">
+          <label for="t-user-ro">
+            Usuario del dueño
+            <app-ayuda texto="El usuario de acceso no se modifica al editar la tienda." />
+          </label>
+          <input id="t-user-ro" [value]="editando()?.dueno_username ?? ''" disabled />
+        </div>
+      }
+    </div>
+
+    @if (errorGeneral()) {
+      <div class="aviso aviso-error" role="alert">
+        <app-icono nombre="alerta" [tamano]="18" />
+        <span>{{ errorGeneral() }}</span>
+      </div>
+    }
+
+    <div class="acciones">
+      <button type="button" class="btn btn-secundario" (click)="cerrar()">Cancelar</button>
+      <button type="submit" class="btn btn-primario" [disabled]="enviando()">
+        {{ enviando() ? 'Guardando…' : esEdicion() ? 'Guardar cambios' : 'Registrar tienda' }}
+      </button>
+    </div>
+  </form>
+</dialog>
