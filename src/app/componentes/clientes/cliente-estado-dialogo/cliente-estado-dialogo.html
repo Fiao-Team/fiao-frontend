@@ -1,0 +1,56 @@
+<dialog #dialogo>
+  @if (cliente(); as c) {
+    <div class="encabezado" [class.peligro]="accion() === 'baja'" [class.exito]="accion() === 'activar'">
+      <span class="icono-circulo">
+        <app-icono [nombre]="accion() === 'baja' ? 'baja' : 'activar'" [tamano]="22" />
+      </span>
+      @if (accion() === 'baja') {
+        <h3>¿Dar de baja a "{{ c.nombres_apellidos }}"?</h3>
+      } @else {
+        <h3>¿Reactivar a "{{ c.nombres_apellidos }}"?</h3>
+      }
+    </div>
+
+    @if (accion() === 'baja') {
+      @if (tieneDeuda()) {
+        <div class="aviso aviso-error" role="alert">
+          <app-icono nombre="alerta" [tamano]="18" />
+          <div>
+            <strong>El cliente tiene deuda pendiente</strong>
+            <span>
+              Saldo deudor actual: {{ dinero(c.moneda, c.saldo_deudor) }}. Solo se puede dar de baja cuando su saldo sea 0.00.
+            </span>
+          </div>
+        </div>
+      } @else {
+        <p class="mensaje">
+          El cliente ya no podrá ingresar al portal ni recibir nuevas ventas al crédito. Su historial se conserva y puedes reactivarlo después.
+        </p>
+      }
+    } @else {
+      <p class="mensaje">
+        El cliente volverá a estar activo para realizar compras al crédito y consultar su cuenta en el portal.
+      </p>
+    }
+
+    @if (error()) {
+      <div class="aviso aviso-error" role="alert">
+        <app-icono nombre="alerta" [tamano]="18" />
+        <span>{{ error() }}</span>
+      </div>
+    }
+
+    <div class="acciones">
+      <button type="button" class="btn btn-secundario" (click)="cerrar()">Cancelar</button>
+      @if (accion() === 'baja') {
+        <button type="button" class="btn btn-peligro" [disabled]="procesando() || tieneDeuda()" (click)="confirmar()">
+          {{ procesando() ? 'Procesando…' : 'Dar de baja' }}
+        </button>
+      } @else {
+        <button type="button" class="btn btn-primario" [disabled]="procesando()" (click)="confirmar()">
+          {{ procesando() ? 'Procesando…' : 'Reactivar cliente' }}
+        </button>
+      }
+    </div>
+  }
+</dialog>
