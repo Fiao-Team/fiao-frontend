@@ -135,4 +135,19 @@ export class Clientes implements OnInit, OnDestroy {
   protected monto(moneda: Moneda, valor: string | number): string {
     return this.dinero(moneda, String(valor));
   }
+
+  /** Porcentaje de crédito usado (0 a 100) para la barra visual de la Fig. 9. */
+  protected porcentajeUso(c: ClienteItem): number {
+    const limite = Number(c.limite_credito);
+    const usado = Number(c.saldo_deudor);
+    if (!Number.isFinite(limite) || limite <= 0 || !Number.isFinite(usado) || usado <= 0) return 0;
+    return Math.min(100, Math.round((usado / limite) * 100));
+  }
+
+  /** Etiqueta de situación del cliente según estado y saldo deudor. */
+  protected situacion(c: ClienteItem): { texto: string; clase: 'al-dia' | 'con-deuda' | 'inactivo' } {
+    if (c.estado !== 1) return { texto: 'Inactivo', clase: 'inactivo' };
+    if (Number(c.saldo_deudor) > 0) return { texto: 'Con deuda', clase: 'con-deuda' };
+    return { texto: 'Al día', clase: 'al-dia' };
+  }
 }

@@ -1,7 +1,7 @@
 <div class="encabezado-pagina">
   <div>
     <h1>Clientes</h1>
-    <p>Administra tus clientes, límites de crédito, ciclos de pago y tasas de interés</p>
+    <p>Créditos, límites y condiciones por persona</p>
   </div>
   <div class="acciones-cabecera">
     <app-como-usar titulo="Clientes" [pasos]="pasos" />
@@ -30,8 +30,8 @@
   <div class="filtros">
     <div class="campo">
       <label for="fc-buscar">
-        Buscar cliente
-        <app-ayuda texto="Busca por nombres, DNI o teléfono." />
+        Buscar por nombre, DNI o teléfono
+        <app-ayuda texto="Busca por nombre completo, DNI o teléfono." />
       </label>
       <div class="con-icono">
         <app-icono nombre="buscar" [tamano]="17" />
@@ -73,10 +73,10 @@
         <thead>
           <tr>
             <th>Cliente</th>
-            <th>Contacto</th>
+            <th>DNI</th>
+            <th>Moneda</th>
             <th class="num">Límite</th>
-            <th class="num">Usado</th>
-            <th class="num">Disponible</th>
+            <th class="col-barra">Usado / Disponible</th>
             <th>Ciclo / TEA</th>
             <th>Estado</th>
             <th class="col-acciones">Acciones</th>
@@ -84,6 +84,8 @@
         </thead>
         <tbody>
           @for (c of clientes(); track c.cliente_id) {
+            @let uso = porcentajeUso(c);
+            @let est = situacion(c);
             <tr>
               <td>
                 <div class="celda-cliente">
@@ -93,26 +95,34 @@
                   <div>
                     <strong>{{ c.nombres_apellidos }}</strong>
                     <span class="sub">
-                      DNI {{ c.dni }}@if (c.username) { · {{ '@' + c.username }} }
+                      {{ c.telefono }}@if (c.username) { · {{ '@' + c.username }} }
                     </span>
                   </div>
                 </div>
               </td>
-              <td>
-                <div>{{ c.telefono }}</div>
-                <span class="sub">{{ c.direccion }}</span>
+              <td class="mono">{{ c.dni }}</td>
+              <td>{{ c.moneda === 'PEN' ? 'Soles' : 'Dólares' }}</td>
+              <td class="num"><strong>{{ monto(c.moneda, c.limite_credito) }}</strong></td>
+              <td class="col-barra">
+                <div class="barra-montos">
+                  <span class="usado" [class.con-deuda]="+c.saldo_deudor > 0">
+                    {{ monto(c.moneda, c.saldo_deudor) }}
+                  </span>
+                  <span class="disponible">{{ monto(c.moneda, c.disponible) }}</span>
+                </div>
+                <div class="barra-pista" [attr.aria-label]="'Crédito usado ' + uso + '%'">
+                  <div class="barra-relleno"
+                       [class.medio]="uso >= 70 && uso < 95"
+                       [class.alto]="uso >= 95"
+                       [style.width.%]="uso"></div>
+                </div>
               </td>
-              <td class="num">{{ monto(c.moneda, c.limite_credito) }}</td>
-              <td class="num" [class.con-deuda]="+c.saldo_deudor > 0">{{ monto(c.moneda, c.saldo_deudor) }}</td>
-              <td class="num"><strong>{{ monto(c.moneda, c.disponible) }}</strong></td>
               <td>
                 <div class="ciclo">Corte {{ c.dia_corte }} · Pago {{ c.dia_pago }}</div>
                 <span class="sub">TEA {{ tasa(c.tea_comp_porcentaje) }}</span>
               </td>
               <td>
-                <span class="badge" [class.activo]="c.estado === 1" [class.inactivo]="c.estado !== 1">
-                  {{ c.estado === 1 ? 'Activo' : 'Inactivo' }}
-                </span>
+                <span class="badge" [class]="est.clase">{{ est.texto }}</span>
               </td>
               <td class="col-acciones">
                 <div class="acciones-fila">

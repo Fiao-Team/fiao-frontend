@@ -95,13 +95,61 @@
   color: var(--fiao-texto-suave);
 }
 
-.ciclo {
-  font-size: 13.5px;
+.mono {
+  font-variant-numeric: tabular-nums;
 }
 
-.con-deuda {
-  color: #b42318;
+.col-barra {
+  min-width: 175px;
+}
+
+.barra-montos {
+  display: flex;
+  justify-content: space-between;
+  gap: 10px;
+  font-size: 12.5px;
+  font-variant-numeric: tabular-nums;
+  margin-bottom: 5px;
+}
+
+.usado {
+  color: var(--fiao-texto-suave);
+}
+
+.usado.con-deuda {
+  color: var(--fiao-texto);
   font-weight: 600;
+}
+
+.disponible {
+  color: var(--fiao-verde-oscuro);
+  font-weight: 600;
+}
+
+.barra-pista {
+  height: 6px;
+  border-radius: 999px;
+  background: #e6ecf5;
+  overflow: hidden;
+}
+
+.barra-relleno {
+  height: 100%;
+  border-radius: 999px;
+  background: var(--fiao-verde);
+  transition: width 0.2s ease;
+}
+
+.barra-relleno.medio {
+  background: var(--fiao-ambar);
+}
+
+.barra-relleno.alto {
+  background: var(--fiao-rojo);
+}
+
+.ciclo {
+  font-size: 13.5px;
 }
 
 .badge {
@@ -110,11 +158,17 @@
   border-radius: 999px;
   font-size: 12px;
   font-weight: 600;
+  white-space: nowrap;
 }
 
-.badge.activo {
+.badge.al-dia {
   background: var(--fiao-verde-claro);
   color: var(--fiao-verde-oscuro);
+}
+
+.badge.con-deuda {
+  background: #fff4e0;
+  color: #a86200;
 }
 
 .badge.inactivo {

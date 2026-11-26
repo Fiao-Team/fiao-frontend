@@ -2,7 +2,7 @@
   <div class="cabecera-modal">
     <div>
       <h3>{{ esEdicion() ? 'Editar cliente' : 'Registrar nuevo cliente' }}</h3>
-      <p class="subtitulo">Configura datos personales, límite de crédito, ciclo de pago y tasas (tope BCRP)</p>
+      <p class="subtitulo">Configura datos personales, condiciones del crédito y tasas (validadas con BCRP)</p>
     </div>
     <div class="cabecera-controles">
       <app-como-usar titulo="Registrar cliente" [pasos]="pasos" variante="enlace" etiqueta="¿Cómo usar?" />
@@ -14,65 +14,335 @@
 
   <form [formGroup]="formulario" (ngSubmit)="guardar()" novalidate>
     <div class="cuerpo-modal">
-      <div class="grupo-titulo">Datos personales y acceso</div>
+      <!-- Bloque superior: Datos personales + Resumen del crédito (Fig. 10 y 11) -->
+      <div class="bloque-superior">
+        <div class="datos-personales">
+          <div class="grupo-titulo">Datos personales</div>
+          <div class="rejilla">
+            <div class="campo completo">
+              <label for="c-nombres">
+                Nombres y apellidos
+                <app-ayuda texto="Nombre completo del cliente." />
+              </label>
+              <input id="c-nombres" formControlName="nombres_apellidos" maxlength="80"
+                     [class.invalido]="erroresCampo()['nombres_apellidos']"
+                     placeholder="Ej. Rosa Díaz" (input)="limpiarError('nombres_apellidos')" />
+              @if (erroresCampo()['nombres_apellidos']) {
+                <span class="error">{{ erroresCampo()['nombres_apellidos'] }}</span>
+              }
+            </div>
+
+            <div class="campo">
+              <label for="c-dni">
+                DNI
+                <app-ayuda texto="Documento de identidad de 8 dígitos." />
+              </label>
+              <input id="c-dni" formControlName="dni" maxlength="8" inputmode="numeric"
+                     [class.invalido]="erroresCampo()['dni']"
+                     placeholder="Ej. 41928653" (input)="limpiarError('dni')" />
+              @if (erroresCampo()['dni']) {
+                <span class="error">{{ erroresCampo()['dni'] }}</span>
+              }
+            </div>
+
+            <div class="campo">
+              <label for="c-tel">
+                Teléfono
+                <app-ayuda texto="Número de 9 dígitos para comunicarse con el cliente." />
+              </label>
+              <input id="c-tel" formControlName="telefono" maxlength="9" inputmode="numeric"
+                     [class.invalido]="erroresCampo()['telefono']"
+                     placeholder="Ej. 987654321" (input)="limpiarError('telefono')" />
+              @if (erroresCampo()['telefono']) {
+                <span class="error">{{ erroresCampo()['telefono'] }}</span>
+              }
+            </div>
+
+            <div class="campo completo">
+              <label for="c-dir">
+                Dirección o referencia
+                <app-ayuda texto="Lugar donde vive o trabaja el cliente." />
+              </label>
+              <input id="c-dir" formControlName="direccion" maxlength="100"
+                     [class.invalido]="erroresCampo()['direccion']"
+                     placeholder="Ej. Urb. Los Girasoles 215" (input)="limpiarError('direccion')" />
+              @if (erroresCampo()['direccion']) {
+                <span class="error">{{ erroresCampo()['direccion'] }}</span>
+              }
+            </div>
+
+            @if (!esEdicion()) {
+              <div class="campo completo">
+                <label for="c-email">
+                  Correo <span class="opcional">(opcional)</span>
+                  <app-ayuda texto="Correo para enviar avisos importantes." />
+                </label>
+                <input id="c-email" type="email" formControlName="email" maxlength="100"
+                       [class.invalido]="erroresCampo()['email']"
+                       placeholder="cliente@correo.pe" (input)="limpiarError('email')" />
+                @if (erroresCampo()['email']) {
+                  <span class="error">{{ erroresCampo()['email'] }}</span>
+                }
+              </div>
+            }
+          </div>
+        </div>
+
+        <!-- Tarjeta viva Resumen del crédito (Fig. 10 y 11) -->
+        <aside class="resumen-credito" aria-label="Resumen del crédito">
+          <h4>Resumen del crédito</h4>
+          <ul>
+            <li>
+              Límite de
+              <strong>
+                {{ formulario.controls.moneda.value === 'USD' ? 'US$' : 'S/' }}
+                {{ formulario.controls.limite_credito.value || '0.00' }}
+              </strong>
+            </li>
+            <li>
+              Corte los <strong>{{ formulario.controls.dia_corte.value }}</strong>,
+              paga los <strong>{{ formulario.controls.dia_pago.value }}</strong> de cada mes.
+            </li>
+            @if (previaTasas(); as pv) {
+              <li>
+                Tasa compensatoria: <strong>TEA {{ tasa(pv.tea_comp_porcentaje) }}</strong>
+                <small>(máx. BCRP {{ tasa(pv.tasa_max_comp_bcrp) }})</small>
+              </li>
+              <li>
+                Tasa moratoria: <strong>TEA {{ tasa(pv.tea_mora_porcentaje) }}</strong>
+                <small>(máx. BCRP {{ tasa(pv.tasa_max_mora_bcrp) }})</small>
+              </li>
+            } @else if (cargandoPrevia()) {
+              <li class="suave">Calculando TEA y topes BCRP…</li>
+            }
+            <li>Hasta <strong>{{ formulario.controls.plazo_max_meses.value }} cuotas</strong>.</li>
+          </ul>
+
+          @if (previaTasas(); as pv) {
+            <div class="estado-bcrp" [class.ok]="pv.cumple_bcrp" [class.excedido]="!pv.cumple_bcrp">
+              <app-icono [nombre]="pv.cumple_bcrp ? 'check' : 'alerta'" [tamano]="16" />
+              <span>{{ pv.cumple_bcrp ? 'Cumple los topes vigentes del BCRP' : 'Supera la tasa máxima vigente del BCRP' }}</span>
+            </div>
+          } @else if (errorPrevia()) {
+            <div class="estado-bcrp info">
+              <app-icono nombre="alerta" [tamano]="16" />
+              <span>{{ errorPrevia() }}</span>
+            </div>
+          }
+        </aside>
+      </div>
+
+      <div class="grupo-titulo separador">Condiciones del crédito</div>
+      <div class="rejilla-tres">
+        <div class="campo">
+          <label for="c-moneda">
+            Moneda
+            <app-ayuda texto="Moneda en que se registra la deuda y el límite." />
+          </label>
+          <select id="c-moneda" formControlName="moneda" (change)="alCambiarTasas(); limpiarError('moneda')">
+            <option value="PEN">Soles (PEN)</option>
+            <option value="USD">Dólares (USD)</option>
+          </select>
+          @if (tieneDeuda()) {
+            <span class="nota-campo">Con deuda activa no se permite cambiar de moneda.</span>
+          }
+          @if (erroresCampo()['moneda']) {
+            <span class="error">{{ erroresCampo()['moneda'] }}</span>
+          }
+        </div>
+
+        <div class="campo">
+          <label for="c-limite">
+            Límite de crédito
+            <app-ayuda texto="Monto máximo que puede deber." />
+          </label>
+          <div class="con-prefijo">
+            <span class="prefijo">{{ formulario.controls.moneda.value === 'USD' ? 'US$' : 'S/' }}</span>
+            <input id="c-limite" type="number" step="0.01" min="0.01" formControlName="limite_credito"
+                   [class.invalido]="erroresCampo()['limite_credito']"
+                   placeholder="500.00" (input)="limpiarError('limite_credito')" />
+          </div>
+          @if (erroresCampo()['limite_credito']) {
+            <span class="error">{{ erroresCampo()['limite_credito'] }}</span>
+          }
+        </div>
+
+        <div class="campo">
+          <label for="c-plazo">
+            Máximo de meses para cuotas
+            <app-ayuda texto="Mayor cantidad de cuotas permitida." />
+          </label>
+          <input id="c-plazo" type="number" min="1" max="60" formControlName="plazo_max_meses"
+                 [class.invalido]="erroresCampo()['plazo_max_meses']"
+                 (input)="limpiarError('plazo_max_meses')" />
+          @if (erroresCampo()['plazo_max_meses']) {
+            <span class="error">{{ erroresCampo()['plazo_max_meses'] }}</span>
+          }
+        </div>
+      </div>
+
+      <!-- Tarjetas lado a lado: Tasa compensatoria | Tasa moratoria (Fig. 10 y 11) -->
+      <div class="rejilla-tasas-doble">
+        <div class="bloque-tasa">
+          <span class="subtitulo-tasa">Tasa compensatoria</span>
+          <div class="rejilla-tasa">
+            <div class="campo">
+              <label for="c-tcomp-tipo">
+                Tipo
+                <app-ayuda texto="Forma en que se calcula el interés regular." />
+              </label>
+              <select id="c-tcomp-tipo" formControlName="tipo_tasa_comp" (change)="alCambiarTasas()">
+                <option value="EFECTIVA">Efectiva</option>
+                <option value="NOMINAL">Nominal</option>
+              </select>
+            </div>
+
+            <div class="campo">
+              <label for="c-tcomp-val">
+                Tasa %
+                <app-ayuda texto="Porcentaje que se cobra por comprar al crédito." />
+              </label>
+              <input id="c-tcomp-val" type="number" step="0.01" min="0.01" formControlName="tasa_compensatoria"
+                     [class.invalido]="erroresCampo()['tasa_compensatoria']"
+                     (input)="alCambiarTasas()" />
+            </div>
+
+            <div class="campo">
+              <label for="c-tcomp-per">
+                Período de la tasa
+                <app-ayuda texto="Período en que está expresada la tasa, por ejemplo 2 % mensual." />
+              </label>
+              <select id="c-tcomp-per" formControlName="periodo_tasa_comp" (change)="alCambiarTasas()">
+                @for (p of periodos; track p.valor) {
+                  <option [value]="p.valor">{{ p.etiqueta }}</option>
+                }
+              </select>
+            </div>
+
+            @if (formulario.controls.tipo_tasa_comp.value === 'NOMINAL') {
+              <div class="campo">
+                <label for="c-tcomp-cap">
+                  Capitalización
+                  <app-ayuda texto="Cada cuánto la tasa nominal genera interés." />
+                </label>
+                <select id="c-tcomp-cap" formControlName="capitalizacion_comp" (change)="alCambiarTasas()">
+                  @for (cap of capitalizaciones; track cap.valor) {
+                    <option [value]="cap.valor">{{ cap.etiqueta }}</option>
+                  }
+                </select>
+              </div>
+            }
+          </div>
+          @if (previaTasas(); as pv) {
+            <div class="tea-pie">Equivalente: <strong>TEA {{ tasa(pv.tea_comp_porcentaje) }}</strong></div>
+          }
+          @if (erroresCampo()['tasa_compensatoria']) {
+            <span class="error-linea">{{ erroresCampo()['tasa_compensatoria'] }}</span>
+          }
+        </div>
+
+        <div class="bloque-tasa">
+          <span class="subtitulo-tasa">Tasa moratoria</span>
+          <div class="rejilla-tasa">
+            <div class="campo">
+              <label for="c-tmora-tipo">
+                Tipo
+                <app-ayuda texto="Forma de calcular el recargo por atraso." />
+              </label>
+              <select id="c-tmora-tipo" formControlName="tipo_tasa_mora" (change)="alCambiarTasas()">
+                <option value="EFECTIVA">Efectiva</option>
+                <option value="NOMINAL">Nominal</option>
+              </select>
+            </div>
+
+            <div class="campo">
+              <label for="c-tmora-val">
+                Tasa %
+                <app-ayuda texto="Porcentaje que se cobra cuando paga tarde (puede ser 0)." />
+              </label>
+              <input id="c-tmora-val" type="number" step="0.01" min="0" formControlName="tasa_moratoria"
+                     [class.invalido]="erroresCampo()['tasa_moratoria']"
+                     (input)="alCambiarTasas()" />
+            </div>
+
+            <div class="campo">
+              <label for="c-tmora-per">
+                Período de la tasa
+                <app-ayuda texto="Período en que está expresada la tasa moratoria." />
+              </label>
+              <select id="c-tmora-per" formControlName="periodo_tasa_mora" (change)="alCambiarTasas()">
+                @for (p of periodos; track p.valor) {
+                  <option [value]="p.valor">{{ p.etiqueta }}</option>
+                }
+              </select>
+            </div>
+
+            @if (formulario.controls.tipo_tasa_mora.value === 'NOMINAL') {
+              <div class="campo">
+                <label for="c-tmora-cap">
+                  Capitalización
+                  <app-ayuda texto="Cada cuánto la tasa moratoria nominal genera interés." />
+                </label>
+                <select id="c-tmora-cap" formControlName="capitalizacion_mora" (change)="alCambiarTasas()">
+                  @for (cap of capitalizaciones; track cap.valor) {
+                    <option [value]="cap.valor">{{ cap.etiqueta }}</option>
+                  }
+                </select>
+              </div>
+            }
+          </div>
+          @if (previaTasas(); as pv) {
+            <div class="tea-pie">Equivalente: <strong>TEA {{ tasa(pv.tea_mora_porcentaje) }}</strong></div>
+          }
+          @if (erroresCampo()['tasa_moratoria']) {
+            <span class="error-linea">{{ erroresCampo()['tasa_moratoria'] }}</span>
+          }
+        </div>
+      </div>
+
+      <div class="rejilla-tres">
+        <div class="campo">
+          <label for="c-dia-corte">
+            Día de corte (1–30)
+            <app-ayuda texto="Día en que se cierra la cuenta; las compras posteriores pasan al mes siguiente." />
+          </label>
+          <input id="c-dia-corte" type="number" min="1" max="30" formControlName="dia_corte"
+                 [class.invalido]="erroresCampo()['dia_corte']"
+                 (input)="limpiarError('dia_corte'); limpiarError('dia_pago')" />
+          @if (erroresCampo()['dia_corte']) {
+            <span class="error">{{ erroresCampo()['dia_corte'] }}</span>
+          }
+        </div>
+
+        <div class="campo">
+          <label for="c-hora-corte">
+            Hora de corte
+            <app-ayuda texto="Hora límite del día de corte. Las compras después de esta hora pasan al mes siguiente." />
+          </label>
+          <input id="c-hora-corte" type="time" formControlName="hora_corte" />
+        </div>
+
+        <div class="campo">
+          <label for="c-dia-pago">
+            Día de pago (1–30)
+            <app-ayuda texto="Día en que debe pagar. Si es menor o igual al día de corte, corresponde al mes siguiente." />
+          </label>
+          <input id="c-dia-pago" type="number" min="1" max="30" formControlName="dia_pago"
+                 [class.invalido]="erroresCampo()['dia_pago']"
+                 (input)="limpiarError('dia_pago')" />
+          @if (erroresCampo()['dia_pago']) {
+            <span class="error">{{ erroresCampo()['dia_pago'] }}</span>
+          }
+        </div>
+      </div>
+
+      <div class="grupo-titulo separador">Acceso del cliente</div>
       <div class="rejilla">
-        <div class="campo completo">
-          <label for="c-nombres">
-            Nombres y apellidos
-            <app-ayuda texto="Nombre completo del cliente." />
-          </label>
-          <input id="c-nombres" formControlName="nombres_apellidos" maxlength="80"
-                 [class.invalido]="erroresCampo()['nombres_apellidos']"
-                 placeholder="Ej. Rosa Díaz Quispe" (input)="limpiarError('nombres_apellidos')" />
-          @if (erroresCampo()['nombres_apellidos']) {
-            <span class="error">{{ erroresCampo()['nombres_apellidos'] }}</span>
-          }
-        </div>
-
-        <div class="campo">
-          <label for="c-dni">
-            DNI
-            <app-ayuda texto="8 dígitos numéricos, único dentro de tu tienda." />
-          </label>
-          <input id="c-dni" formControlName="dni" maxlength="8" inputmode="numeric"
-                 [class.invalido]="erroresCampo()['dni']"
-                 placeholder="Ej. 41928653" (input)="limpiarError('dni')" />
-          @if (erroresCampo()['dni']) {
-            <span class="error">{{ erroresCampo()['dni'] }}</span>
-          }
-        </div>
-
-        <div class="campo">
-          <label for="c-tel">
-            Teléfono
-            <app-ayuda texto="9 dígitos numéricos para recordatorios de pago." />
-          </label>
-          <input id="c-tel" formControlName="telefono" maxlength="9" inputmode="numeric"
-                 [class.invalido]="erroresCampo()['telefono']"
-                 placeholder="Ej. 987654321" (input)="limpiarError('telefono')" />
-          @if (erroresCampo()['telefono']) {
-            <span class="error">{{ erroresCampo()['telefono'] }}</span>
-          }
-        </div>
-
-        <div class="campo completo">
-          <label for="c-dir">
-            Dirección
-            <app-ayuda texto="Domicilio del cliente." />
-          </label>
-          <input id="c-dir" formControlName="direccion" maxlength="100"
-                 [class.invalido]="erroresCampo()['direccion']"
-                 placeholder="Ej. Jr. Las Flores 215" (input)="limpiarError('direccion')" />
-          @if (erroresCampo()['direccion']) {
-            <span class="error">{{ erroresCampo()['direccion'] }}</span>
-          }
-        </div>
-
         @if (!esEdicion()) {
           <div class="campo">
             <label for="c-user">
               Usuario
-              <app-ayuda texto="Nombre con el que el cliente entrará a su portal. Sin espacios." />
+              <app-ayuda texto="Nombre que usará para ingresar. Sin espacios." />
             </label>
             <input id="c-user" formControlName="username" maxlength="20" autocomplete="off"
                    [class.invalido]="erroresCampo()['username']"
@@ -84,8 +354,8 @@
 
           <div class="campo">
             <label for="c-pass">
-              Contraseña inicial
-              <app-ayuda texto="Mínimo 8 caracteres. El cliente podrá cambiarla desde su cuenta." />
+              Contraseña temporal
+              <app-ayuda texto="Clave inicial que luego podrá cambiar." />
             </label>
             <div class="fila-clave">
               <div class="con-ojo">
@@ -106,19 +376,6 @@
               <span class="error">{{ erroresCampo()['password'] }}</span>
             }
           </div>
-
-          <div class="campo completo">
-            <label for="c-email">
-              Correo electrónico <span class="opcional">(opcional)</span>
-              <app-ayuda texto="Correo para notificaciones de estados de cuenta." />
-            </label>
-            <input id="c-email" type="email" formControlName="email" maxlength="100"
-                   [class.invalido]="erroresCampo()['email']"
-                   placeholder="cliente@correo.pe" (input)="limpiarError('email')" />
-            @if (erroresCampo()['email']) {
-              <span class="error">{{ erroresCampo()['email'] }}</span>
-            }
-          </div>
         } @else {
           <div class="campo completo">
             <label for="c-user-ro">
@@ -129,232 +386,6 @@
           </div>
         }
       </div>
-
-      <div class="grupo-titulo">Límite de crédito y ciclo de pago</div>
-      <div class="rejilla">
-        <div class="campo">
-          <label for="c-moneda">
-            Moneda
-            <app-ayuda texto="El cliente solo podrá comprar productos en esta moneda." />
-          </label>
-          <select id="c-moneda" formControlName="moneda" (change)="alCambiarTasas(); limpiarError('moneda')">
-            <option value="PEN">Soles (PEN)</option>
-            <option value="USD">Dólares (USD)</option>
-          </select>
-          @if (tieneDeuda()) {
-            <span class="nota-campo">Con deuda activa no se permite cambiar de moneda.</span>
-          }
-          @if (erroresCampo()['moneda']) {
-            <span class="error">{{ erroresCampo()['moneda'] }}</span>
-          }
-        </div>
-
-        <div class="campo">
-          <label for="c-limite">
-            Límite de crédito
-            <app-ayuda texto="Monto máximo de capital que puede deber el cliente." />
-          </label>
-          <div class="con-prefijo">
-            <span class="prefijo">{{ formulario.controls.moneda.value === 'USD' ? 'US$' : 'S/' }}</span>
-            <input id="c-limite" type="number" step="0.01" min="0.01" formControlName="limite_credito"
-                   [class.invalido]="erroresCampo()['limite_credito']"
-                   placeholder="500.00" (input)="limpiarError('limite_credito')" />
-          </div>
-          @if (erroresCampo()['limite_credito']) {
-            <span class="error">{{ erroresCampo()['limite_credito'] }}</span>
-          }
-        </div>
-
-        <div class="campo">
-          <label for="c-plazo">
-            Plazo máximo (meses)
-            <app-ayuda texto="Número máximo de cuotas mensuales permitidas en compras en meses." />
-          </label>
-          <input id="c-plazo" type="number" min="1" max="60" formControlName="plazo_max_meses"
-                 [class.invalido]="erroresCampo()['plazo_max_meses']"
-                 (input)="limpiarError('plazo_max_meses')" />
-          @if (erroresCampo()['plazo_max_meses']) {
-            <span class="error">{{ erroresCampo()['plazo_max_meses'] }}</span>
-          }
-        </div>
-
-        <div class="campo">
-          <label for="c-hora-corte">
-            Hora de corte
-            <app-ayuda texto="Compras hasta este minuto (inclusive) entran en el ciclo actual." />
-          </label>
-          <input id="c-hora-corte" type="time" formControlName="hora_corte" />
-        </div>
-
-        <div class="campo">
-          <label for="c-dia-corte">
-            Día de corte (1–30)
-            <app-ayuda texto="Día del mes en que se cierra el listado de compras." />
-          </label>
-          <input id="c-dia-corte" type="number" min="1" max="30" formControlName="dia_corte"
-                 [class.invalido]="erroresCampo()['dia_corte']"
-                 (input)="limpiarError('dia_corte'); limpiarError('dia_pago')" />
-          @if (erroresCampo()['dia_corte']) {
-            <span class="error">{{ erroresCampo()['dia_corte'] }}</span>
-          }
-        </div>
-
-        <div class="campo">
-          <label for="c-dia-pago">
-            Día de pago (1–30)
-            <app-ayuda texto="Día de vencimiento del listado. Debe ser distinto al día de corte." />
-          </label>
-          <input id="c-dia-pago" type="number" min="1" max="30" formControlName="dia_pago"
-                 [class.invalido]="erroresCampo()['dia_pago']"
-                 (input)="limpiarError('dia_pago')" />
-          @if (erroresCampo()['dia_pago']) {
-            <span class="error">{{ erroresCampo()['dia_pago'] }}</span>
-          }
-        </div>
-      </div>
-
-      <div class="grupo-titulo">Tasas de interés y validación BCRP</div>
-
-      <div class="bloque-tasa">
-        <span class="subtitulo-tasa">Tasa compensatoria</span>
-        <div class="rejilla-tasa">
-          <div class="campo">
-            <label for="c-tcomp-tipo">
-              Tipo
-              <app-ayuda texto="Efectiva o Nominal (si es nominal debes indicar la capitalización)." />
-            </label>
-            <select id="c-tcomp-tipo" formControlName="tipo_tasa_comp" (change)="alCambiarTasas()">
-              <option value="EFECTIVA">Efectiva</option>
-              <option value="NOMINAL">Nominal</option>
-            </select>
-          </div>
-
-          <div class="campo">
-            <label for="c-tcomp-val">
-              Tasa (%)
-              <app-ayuda texto="Porcentaje mayor a 0 (ej. 30 para 30 %)." />
-            </label>
-            <input id="c-tcomp-val" type="number" step="0.01" min="0.01" formControlName="tasa_compensatoria"
-                   [class.invalido]="erroresCampo()['tasa_compensatoria']"
-                   (input)="alCambiarTasas()" />
-          </div>
-
-          <div class="campo">
-            <label for="c-tcomp-per">
-              Período
-              <app-ayuda texto="Período de referencia de la tasa ingresada." />
-            </label>
-            <select id="c-tcomp-per" formControlName="periodo_tasa_comp" (change)="alCambiarTasas()">
-              @for (p of periodos; track p.valor) {
-                <option [value]="p.valor">{{ p.etiqueta }}</option>
-              }
-            </select>
-          </div>
-
-          @if (formulario.controls.tipo_tasa_comp.value === 'NOMINAL') {
-            <div class="campo">
-              <label for="c-tcomp-cap">
-                Capitalización
-                <app-ayuda texto="Frecuencia de capitalización de la tasa nominal." />
-              </label>
-              <select id="c-tcomp-cap" formControlName="capitalizacion_comp" (change)="alCambiarTasas()">
-                @for (cap of capitalizaciones; track cap.valor) {
-                  <option [value]="cap.valor">{{ cap.etiqueta }}</option>
-                }
-              </select>
-            </div>
-          }
-        </div>
-        @if (erroresCampo()['tasa_compensatoria']) {
-          <span class="error-linea">{{ erroresCampo()['tasa_compensatoria'] }}</span>
-        }
-      </div>
-
-      <div class="bloque-tasa">
-        <span class="subtitulo-tasa">Tasa moratoria</span>
-        <div class="rejilla-tasa">
-          <div class="campo">
-            <label for="c-tmora-tipo">
-              Tipo
-              <app-ayuda texto="Efectiva o Nominal para el cálculo de mora por atraso." />
-            </label>
-            <select id="c-tmora-tipo" formControlName="tipo_tasa_mora" (change)="alCambiarTasas()">
-              <option value="EFECTIVA">Efectiva</option>
-              <option value="NOMINAL">Nominal</option>
-            </select>
-          </div>
-
-          <div class="campo">
-            <label for="c-tmora-val">
-              Tasa (%)
-              <app-ayuda texto="Porcentaje mayor o igual a 0 (0 si no se cobra mora)." />
-            </label>
-            <input id="c-tmora-val" type="number" step="0.01" min="0" formControlName="tasa_moratoria"
-                   [class.invalido]="erroresCampo()['tasa_moratoria']"
-                   (input)="alCambiarTasas()" />
-          </div>
-
-          <div class="campo">
-            <label for="c-tmora-per">
-              Período
-              <app-ayuda texto="Período de referencia de la tasa moratoria." />
-            </label>
-            <select id="c-tmora-per" formControlName="periodo_tasa_mora" (change)="alCambiarTasas()">
-              @for (p of periodos; track p.valor) {
-                <option [value]="p.valor">{{ p.etiqueta }}</option>
-              }
-            </select>
-          </div>
-
-          @if (formulario.controls.tipo_tasa_mora.value === 'NOMINAL') {
-            <div class="campo">
-              <label for="c-tmora-cap">
-                Capitalización
-                <app-ayuda texto="Frecuencia de capitalización de la tasa moratoria nominal." />
-              </label>
-              <select id="c-tmora-cap" formControlName="capitalizacion_mora" (change)="alCambiarTasas()">
-                @for (cap of capitalizaciones; track cap.valor) {
-                  <option [value]="cap.valor">{{ cap.etiqueta }}</option>
-                }
-              </select>
-            </div>
-          }
-        </div>
-        @if (erroresCampo()['tasa_moratoria']) {
-          <span class="error-linea">{{ erroresCampo()['tasa_moratoria'] }}</span>
-        }
-      </div>
-
-      <!-- Panel de validación BCRP en tiempo real -->
-      @if (cargandoPrevia()) {
-        <div class="panel-bcrp cargando">Calculando TEA y validando topes BCRP…</div>
-      } @else if (previaTasas(); as pv) {
-        <div class="panel-bcrp" [class.ok]="pv.cumple_bcrp" [class.excedido]="!pv.cumple_bcrp">
-          <div class="bcrp-cabecera">
-            <app-icono [nombre]="pv.cumple_bcrp ? 'check' : 'alerta'" [tamano]="18" />
-            <strong>
-              {{ pv.cumple_bcrp ? 'Cumple los topes vigentes del BCRP' : 'Supera la tasa máxima vigente del BCRP' }}
-            </strong>
-          </div>
-          <div class="bcrp-datos">
-            <div>
-              <span>TEA compensatoria:</span>
-              <strong>{{ tasa(pv.tea_comp_porcentaje) }}</strong>
-              <small>(máx. {{ tasa(pv.tasa_max_comp_bcrp) }})</small>
-            </div>
-            <div>
-              <span>TEA moratoria:</span>
-              <strong>{{ tasa(pv.tea_mora_porcentaje) }}</strong>
-              <small>(máx. {{ tasa(pv.tasa_max_mora_bcrp) }})</small>
-            </div>
-          </div>
-        </div>
-      } @else if (errorPrevia()) {
-        <div class="aviso aviso-info">
-          <app-icono nombre="alerta" [tamano]="18" />
-          <span>{{ errorPrevia() }}</span>
-        </div>
-      }
 
       @if (errorGeneral()) {
         <div class="aviso aviso-error" role="alert">
@@ -367,7 +398,7 @@
     <div class="pie-modal">
       <button type="button" class="btn btn-secundario" (click)="cerrar()">Cancelar</button>
       <button type="submit" class="btn btn-primario" [disabled]="enviando()">
-        {{ enviando() ? 'Guardando…' : esEdicion() ? 'Guardar cambios' : 'Registrar cliente' }}
+        {{ enviando() ? 'Guardando…' : esEdicion() ? 'Guardar cambios' : 'Guardar cliente' }}
       </button>
     </div>
   </form>
