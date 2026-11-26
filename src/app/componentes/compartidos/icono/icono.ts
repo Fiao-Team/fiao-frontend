@@ -4,7 +4,7 @@ import { Component, input } from '@angular/core';
 export type NombreIcono =
   | 'ojo' | 'ojo-cerrado' | 'menu' | 'salir' | 'llave' | 'flecha-abajo'
   | 'buscar' | 'mas' | 'quitar' | 'check' | 'alerta' | 'calendario' | 'basura'
-  | 'editar' | 'baja' | 'activar' | 'tienda';
+  | 'editar' | 'baja' | 'activar' | 'tienda' | 'paquete';
 
 /**
  * Ícono en SVG (dibujos de Lucide, https://lucide.dev, licencia ISC).

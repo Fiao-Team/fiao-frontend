@@ -4,6 +4,7 @@ import { EnConstruccion } from './componentes/compartidos/en-construccion/en-con
 import { Layout } from './componentes/compartidos/layout/layout';
 import { IniciarSesion } from './componentes/autenticacion/iniciar-sesion/iniciar-sesion';
 import { InicioNegocioComponente } from './componentes/negocio/inicio-negocio/inicio-negocio';
+import { Productos } from './componentes/productos/productos/productos';
 import { Tiendas } from './componentes/tiendas/tiendas/tiendas';
 import { NuevaVenta } from './componentes/ventas/nueva-venta/nueva-venta';
 import { soloRol, soloSinSesion } from './servicios/autenticacion-guard';
@@ -37,7 +38,7 @@ export const routes: Routes = [
     canActivate: [soloRol('ADMIN_NEGOCIO')],
     children: [
       { path: 'inicio', component: InicioNegocioComponente, title: 'Inicio · Fiao' },
-      pendiente('productos', 'Productos', 'las Fig. 7 y 8'),
+      { path: 'productos', component: Productos, title: 'Productos · Fiao' },
       pendiente('clientes', 'Clientes', 'las Fig. 9 a 12'),
       { path: 'nueva-venta', component: NuevaVenta, title: 'Nueva venta · Fiao' },
       pendiente('registrar-pago', 'Registrar pago', 'las Fig. 20 a 22'),
