@@ -3,6 +3,7 @@ import { Routes } from '@angular/router';
 import { EnConstruccion } from './componentes/compartidos/en-construccion/en-construccion';
 import { Layout } from './componentes/compartidos/layout/layout';
 import { IniciarSesion } from './componentes/autenticacion/iniciar-sesion/iniciar-sesion';
+import { Productos } from './componentes/productos/productos/productos';
 import { NuevaVenta } from './componentes/ventas/nueva-venta/nueva-venta';
 import { soloRol, soloSinSesion } from './servicios/autenticacion-guard';
 
@@ -32,7 +33,7 @@ export const routes: Routes = [
     canActivate: [soloRol('ADMIN_NEGOCIO')],
     children: [
       pendiente('inicio', 'Inicio', 'la Fig. 6'),
-      pendiente('productos', 'Productos', 'las Fig. 7 y 8'),
+      { path: 'productos', component: Productos, title: 'Productos · Fiao' },
       pendiente('clientes', 'Clientes', 'las Fig. 9 a 12'),
       { path: 'nueva-venta', component: NuevaVenta, title: 'Nueva venta · Fiao' },
       pendiente('registrar-pago', 'Registrar pago', 'las Fig. 20 a 22'),

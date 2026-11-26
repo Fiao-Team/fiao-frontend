@@ -1,0 +1,169 @@
+<div class="encabezado-pagina">
+  <div>
+    <h1>Productos</h1>
+    <p>Administra el catálogo de productos y precios de tu tienda</p>
+  </div>
+  <div class="acciones-cabecera">
+    <app-como-usar titulo="Productos" [pasos]="pasos" />
+    <button type="button" class="btn btn-primario" (click)="nuevoProducto()">
+      <app-icono nombre="mas" [tamano]="18" />
+      Nuevo producto
+    </button>
+  </div>
+</div>
+
+@if (aviso()) {
+  <div class="aviso aviso-exito mensaje-pagina" role="status">
+    <app-icono nombre="check" [tamano]="18" />
+    <span>{{ aviso() }}</span>
+  </div>
+}
+
+@if (error()) {
+  <div class="aviso aviso-error mensaje-pagina" role="alert">
+    <app-icono nombre="alerta" [tamano]="18" />
+    <span>{{ error() }}</span>
+  </div>
+}
+
+<section class="tarjeta">
+  <div class="filtros">
+    <div class="campo">
+      <label for="fp-buscar">
+        Buscar producto
+        <app-ayuda texto="Busca por nombre, marca o proveedor." />
+      </label>
+      <div class="con-icono">
+        <app-icono nombre="buscar" [tamano]="17" />
+        <input id="fp-buscar" type="search" [value]="buscar()"
+               placeholder="Ej. Atún, Florida o proveedor"
+               (input)="alBuscar($any($event.target).value)" />
+      </div>
+    </div>
+
+    <div class="campo">
+      <label for="fp-categoria">
+        Categoría
+        <app-ayuda texto="Filtra por categoría del producto." />
+      </label>
+      <input id="fp-categoria" type="search" [value]="categoria()"
+             placeholder="Ej. Conservas, Abarrotes"
+             (input)="alCambiarCategoria($any($event.target).value)" />
+    </div>
+
+    <div class="campo">
+      <label for="fp-moneda">
+        Moneda
+        <app-ayuda texto="Filtra productos en soles (PEN) o dólares (USD)." />
+      </label>
+      <select id="fp-moneda" [value]="moneda()" (change)="alCambiarMoneda($any($event.target).value)">
+        <option value="">Todas</option>
+        <option value="PEN">Soles (PEN)</option>
+        <option value="USD">Dólares (USD)</option>
+      </select>
+    </div>
+
+    <div class="campo">
+      <label for="fp-forma">
+        Modalidad de fiado
+        <app-ayuda texto="Filtra según si permite fin de mes, cuotas o ambas." />
+      </label>
+      <select id="fp-forma" [value]="formaVenta()" (change)="alCambiarFormaVenta($any($event.target).value)">
+        <option value="">Todas</option>
+        <option value="FIN_DE_MES">Fin de mes</option>
+        <option value="EN_MESES">En cuotas</option>
+        <option value="AMBAS">Fin de mes y cuotas</option>
+      </select>
+    </div>
+  </div>
+
+  <div class="barra-secundaria">
+    <label class="check-inactivos">
+      <input id="fp-inactivos" type="checkbox" [checked]="mostrarInactivos()"
+             (change)="alAlternarInactivos($any($event.target).checked)" />
+      <span>Mostrar productos inactivos</span>
+    </label>
+    <span class="conteo">{{ productos().length }} {{ productos().length === 1 ? 'producto' : 'productos' }}</span>
+  </div>
+
+  @if (cargando()) {
+    <p class="estado-tabla">Cargando productos…</p>
+  } @else if (productos().length === 0) {
+    <p class="estado-tabla">No se encontraron productos con los filtros seleccionados.</p>
+  } @else {
+    <div class="tabla-contenedor">
+      <table class="tabla">
+        <thead>
+          <tr>
+            <th>Producto</th>
+            <th>Categoría</th>
+            <th>Moneda</th>
+            <th class="num">Contado</th>
+            <th class="num">Lista (fiado)</th>
+            <th>Modalidad</th>
+            <th>Estado</th>
+            <th class="col-acciones">Acciones</th>
+          </tr>
+        </thead>
+        <tbody>
+          @for (p of productos(); track p.producto_id) {
+            <tr>
+              <td>
+                <div class="celda-producto">
+                  @if (p.imagen_url) {
+                    <img class="miniatura" [src]="p.imagen_url" [alt]="p.nombre" />
+                  } @else {
+                    <span class="miniatura-icono">
+                      <app-icono nombre="paquete" [tamano]="16" />
+                    </span>
+                  }
+                  <div>
+                    <strong>{{ p.nombre }}</strong>
+                    <span class="sub">
+                      {{ p.unidad_medida }}@if (p.marca) { · {{ p.marca }} }@if (p.proveedor) { · {{ p.proveedor }} }
+                    </span>
+                  </div>
+                </div>
+              </td>
+              <td>{{ p.categoria || '—' }}</td>
+              <td>{{ p.moneda }}</td>
+              <td class="num">{{ formatoPrecio(p.moneda, p.precio_contado) }}</td>
+              <td class="num"><strong>{{ formatoPrecio(p.moneda, p.precio_lista) }}</strong></td>
+              <td>{{ etiquetasForma[p.forma_venta_credito] }}</td>
+              <td>
+                <span class="badge" [class.activo]="p.estado === 1" [class.inactivo]="p.estado !== 1">
+                  {{ p.estado === 1 ? 'Activo' : 'Inactivo' }}
+                </span>
+              </td>
+              <td class="col-acciones">
+                <div class="acciones-fila">
+                  <button type="button" class="btn-icono" title="Editar producto"
+                          [attr.aria-label]="'Editar ' + p.nombre"
+                          (click)="editarProducto(p)">
+                    <app-icono nombre="editar" [tamano]="17" />
+                  </button>
+                  @if (p.estado === 1) {
+                    <button type="button" class="btn-icono peligro" title="Dar de baja"
+                            [attr.aria-label]="'Dar de baja ' + p.nombre"
+                            (click)="confirmarBaja(p)">
+                      <app-icono nombre="baja" [tamano]="17" />
+                    </button>
+                  } @else {
+                    <button type="button" class="btn-icono exito" title="Reactivar producto"
+                            [attr.aria-label]="'Reactivar ' + p.nombre"
+                            (click)="confirmarReactivar(p)">
+                      <app-icono nombre="activar" [tamano]="17" />
+                    </button>
+                  }
+                </div>
+              </td>
+            </tr>
+          }
+        </tbody>
+      </table>
+    </div>
+  }
+</section>
+
+<app-producto-formulario-dialogo (guardado)="alGuardar($event)" />
+<app-producto-estado-dialogo (actualizado)="alCambiarEstado($event)" />

@@ -1,0 +1,136 @@
+<dialog #dialogo>
+  <div class="titulo">
+    <div>
+      <h3>{{ esEdicion() ? 'Editar producto' : 'Registrar nuevo producto' }}</h3>
+      <p class="subtitulo">Define precios al contado, precio de lista para fiado y modalidad de crédito</p>
+    </div>
+    <app-como-usar titulo="Registrar producto" [pasos]="pasos" variante="enlace" etiqueta="¿Cómo usar?" />
+  </div>
+
+  <form [formGroup]="formulario" (ngSubmit)="guardar()" novalidate>
+    <div class="rejilla">
+      <div class="campo completo">
+        <label for="p-nombre">
+          Nombre del producto
+          <app-ayuda texto="Descripción clara que aparecerá en las ventas y recibos." />
+        </label>
+        <input id="p-nombre" formControlName="nombre" maxlength="80"
+               placeholder="Ej. Atún Florida 170g" (input)="limpiarError('nombre')" />
+        @if (erroresCampo()['nombre']) {
+          <span class="error">{{ erroresCampo()['nombre'] }}</span>
+        }
+      </div>
+
+      <div class="campo">
+        <label for="p-marca">
+          Marca (opcional)
+          <app-ayuda texto="Marca comercial del producto." />
+        </label>
+        <input id="p-marca" formControlName="marca" maxlength="40" placeholder="Ej. Florida" />
+      </div>
+
+      <div class="campo">
+        <label for="p-categoria">
+          Categoría (opcional)
+          <app-ayuda texto="Agrupa tus productos para encontrarlos más rápido." />
+        </label>
+        <input id="p-categoria" formControlName="categoria" maxlength="40" placeholder="Ej. Conservas" />
+      </div>
+
+      <div class="campo">
+        <label for="p-proveedor">
+          Proveedor (opcional)
+          <app-ayuda texto="Distribuidor o mayorista que abastece el producto." />
+        </label>
+        <input id="p-proveedor" formControlName="proveedor" maxlength="60" placeholder="Ej. Distribuidora Lima" />
+      </div>
+
+      <div class="campo">
+        <label for="p-unidad">
+          Unidad de medida
+          <app-ayuda texto="Presentación en la que vendes el producto (Unidad, Bolsa, Kg, etc.)." />
+        </label>
+        <input id="p-unidad" formControlName="unidad_medida" maxlength="15" list="lista-unidades"
+               placeholder="Ej. Unidad" (input)="limpiarError('unidad_medida')" />
+        <datalist id="lista-unidades">
+          @for (u of unidades; track u) {
+            <option [value]="u"></option>
+          }
+        </datalist>
+        @if (erroresCampo()['unidad_medida']) {
+          <span class="error">{{ erroresCampo()['unidad_medida'] }}</span>
+        }
+      </div>
+
+      <div class="campo">
+        <label for="p-moneda">
+          Moneda
+          <app-ayuda texto="Solo se venderá a clientes configurados en esta misma moneda." />
+        </label>
+        <select id="p-moneda" formControlName="moneda">
+          <option value="PEN">Soles (PEN)</option>
+          <option value="USD">Dólares (USD)</option>
+        </select>
+      </div>
+
+      <div class="campo">
+        <label for="p-forma">
+          Modalidad de fiado
+          <app-ayuda texto="Define si el producto se fía a fin de mes, en cuotas o en ambas modalidades." />
+        </label>
+        <select id="p-forma" formControlName="forma_venta_credito">
+          <option value="FIN_DE_MES">Fin de mes</option>
+          <option value="EN_MESES">En cuotas</option>
+          <option value="AMBAS">Fin de mes y cuotas</option>
+        </select>
+      </div>
+
+      <div class="campo">
+        <label for="p-contado">
+          Precio al contado
+          <app-ayuda texto="Precio en efectivo del producto (debe ser mayor a 0)." />
+        </label>
+        <input id="p-contado" type="number" step="0.01" min="0.01" formControlName="precio_contado"
+               placeholder="0.00" (input)="limpiarError('precio_contado'); limpiarError('precio_lista')" />
+        @if (erroresCampo()['precio_contado']) {
+          <span class="error">{{ erroresCampo()['precio_contado'] }}</span>
+        }
+      </div>
+
+      <div class="campo">
+        <label for="p-lista">
+          Precio de lista (fiado)
+          <app-ayuda texto="Precio usado al vender al crédito. Debe ser mayor o igual al contado." />
+        </label>
+        <input id="p-lista" type="number" step="0.01" min="0.01" formControlName="precio_lista"
+               placeholder="0.00" (input)="limpiarError('precio_lista')" />
+        @if (erroresCampo()['precio_lista']) {
+          <span class="error">{{ erroresCampo()['precio_lista'] }}</span>
+        }
+      </div>
+
+      <div class="campo completo">
+        <label for="p-imagen">
+          URL de imagen (opcional)
+          <app-ayuda texto="Imagen referencial que se mostrará en el catálogo y en nueva venta." />
+        </label>
+        <input id="p-imagen" formControlName="imagen_url" maxlength="255"
+               placeholder="https://ejemplo.com/producto.jpg" />
+      </div>
+    </div>
+
+    @if (errorGeneral()) {
+      <div class="aviso aviso-error" role="alert">
+        <app-icono nombre="alerta" [tamano]="18" />
+        <span>{{ errorGeneral() }}</span>
+      </div>
+    }
+
+    <div class="acciones">
+      <button type="button" class="btn btn-secundario" (click)="cerrar()">Cancelar</button>
+      <button type="submit" class="btn btn-primario" [disabled]="enviando()">
+        {{ enviando() ? 'Guardando…' : esEdicion() ? 'Guardar cambios' : 'Registrar producto' }}
+      </button>
+    </div>
+  </form>
+</dialog>
