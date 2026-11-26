@@ -3,6 +3,7 @@ import { Routes } from '@angular/router';
 import { EnConstruccion } from './componentes/compartidos/en-construccion/en-construccion';
 import { Layout } from './componentes/compartidos/layout/layout';
 import { IniciarSesion } from './componentes/autenticacion/iniciar-sesion/iniciar-sesion';
+import { Clientes } from './componentes/clientes/clientes/clientes';
 import { InicioNegocioComponente } from './componentes/negocio/inicio-negocio/inicio-negocio';
 import { Productos } from './componentes/productos/productos/productos';
 import { Tiendas } from './componentes/tiendas/tiendas/tiendas';
@@ -39,7 +40,7 @@ export const routes: Routes = [
     children: [
       { path: 'inicio', component: InicioNegocioComponente, title: 'Inicio · Fiao' },
       { path: 'productos', component: Productos, title: 'Productos · Fiao' },
-      pendiente('clientes', 'Clientes', 'las Fig. 9 a 12'),
+      { path: 'clientes', component: Clientes, title: 'Clientes · Fiao' },
       { path: 'nueva-venta', component: NuevaVenta, title: 'Nueva venta · Fiao' },
       pendiente('registrar-pago', 'Registrar pago', 'las Fig. 20 a 22'),
       pendiente('listados', 'Listados de pago', 'las Fig. 23 y 24'),

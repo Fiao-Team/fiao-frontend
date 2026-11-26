@@ -1,0 +1,228 @@
+.acciones-cabecera {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 10px;
+}
+
+.mensaje-pagina {
+  margin-bottom: 16px;
+}
+
+.filtros {
+  display: grid;
+  grid-template-columns: 2.5fr 1fr;
+  gap: 14px;
+}
+
+.filtros .campo {
+  margin-bottom: 8px;
+}
+
+.con-icono {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+.con-icono app-icono {
+  position: absolute;
+  left: 11px;
+  color: var(--fiao-texto-suave);
+  pointer-events: none;
+}
+
+.con-icono input {
+  padding-left: 36px;
+}
+
+.barra-secundaria {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  margin: 4px 0 14px;
+  font-size: 14px;
+}
+
+.check-inactivos {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  cursor: pointer;
+}
+
+.conteo {
+  color: var(--fiao-texto-suave);
+  font-size: 13px;
+}
+
+.estado-tabla {
+  margin: 24px 0 8px;
+  text-align: center;
+  color: var(--fiao-texto-suave);
+}
+
+.tabla tbody tr {
+  transition: background-color 0.12s ease;
+}
+
+.tabla tbody tr:hover {
+  background: #f8fafd;
+}
+
+.celda-cliente {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.avatar-icono {
+  display: grid;
+  place-items: center;
+  width: 34px;
+  height: 34px;
+  border-radius: 999px;
+  background: var(--fiao-verde-claro);
+  color: var(--fiao-verde-oscuro);
+  flex-shrink: 0;
+}
+
+.sub {
+  display: block;
+  font-size: 12px;
+  color: var(--fiao-texto-suave);
+}
+
+.mono {
+  font-variant-numeric: tabular-nums;
+}
+
+.col-barra {
+  min-width: 175px;
+}
+
+.barra-montos {
+  display: flex;
+  justify-content: space-between;
+  gap: 10px;
+  font-size: 12.5px;
+  font-variant-numeric: tabular-nums;
+  margin-bottom: 5px;
+}
+
+.usado {
+  color: var(--fiao-texto-suave);
+}
+
+.usado.con-deuda {
+  color: var(--fiao-texto);
+  font-weight: 600;
+}
+
+.disponible {
+  color: var(--fiao-verde-oscuro);
+  font-weight: 600;
+}
+
+.barra-pista {
+  height: 6px;
+  border-radius: 999px;
+  background: #e6ecf5;
+  overflow: hidden;
+}
+
+.barra-relleno {
+  height: 100%;
+  border-radius: 999px;
+  background: var(--fiao-verde);
+  transition: width 0.2s ease;
+}
+
+.barra-relleno.medio {
+  background: var(--fiao-ambar);
+}
+
+.barra-relleno.alto {
+  background: var(--fiao-rojo);
+}
+
+.ciclo {
+  font-size: 13.5px;
+}
+
+.badge {
+  display: inline-block;
+  padding: 3px 10px;
+  border-radius: 999px;
+  font-size: 12px;
+  font-weight: 600;
+  white-space: nowrap;
+}
+
+.badge.al-dia {
+  background: var(--fiao-verde-claro);
+  color: var(--fiao-verde-oscuro);
+}
+
+.badge.con-deuda {
+  background: #fff4e0;
+  color: #a86200;
+}
+
+.badge.inactivo {
+  background: #fdecec;
+  color: #b42318;
+}
+
+.col-acciones {
+  text-align: right;
+  white-space: nowrap;
+}
+
+.acciones-fila {
+  display: inline-flex;
+  gap: 6px;
+}
+
+.btn-icono {
+  display: inline-grid;
+  place-items: center;
+  width: 34px;
+  height: 34px;
+  padding: 0;
+  border: 1px solid var(--fiao-borde);
+  border-radius: 8px;
+  background: var(--fiao-superficie);
+  color: var(--fiao-texto);
+  cursor: pointer;
+}
+
+.btn-icono:hover {
+  background: var(--fiao-fondo);
+}
+
+.btn-icono.peligro {
+  color: var(--fiao-rojo);
+}
+
+.btn-icono.peligro:hover {
+  background: #fdecec;
+  border-color: #f7c5c5;
+}
+
+.btn-icono.exito {
+  color: var(--fiao-verde-oscuro);
+}
+
+.btn-icono.exito:hover {
+  background: var(--fiao-verde-claro);
+  border-color: #b7e8e1;
+}
+
+@media (max-width: 700px) {
+  .filtros {
+    grid-template-columns: 1fr;
+  }
+}

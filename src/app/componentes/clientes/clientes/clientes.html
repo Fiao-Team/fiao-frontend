@@ -1,0 +1,158 @@
+<div class="encabezado-pagina">
+  <div>
+    <h1>Clientes</h1>
+    <p>Créditos, límites y condiciones por persona</p>
+  </div>
+  <div class="acciones-cabecera">
+    <app-como-usar titulo="Clientes" [pasos]="pasos" />
+    <button type="button" class="btn btn-primario" (click)="nuevoCliente()">
+      <app-icono nombre="mas" [tamano]="18" />
+      Nuevo cliente
+    </button>
+  </div>
+</div>
+
+@if (aviso()) {
+  <div class="aviso aviso-exito mensaje-pagina" role="status">
+    <app-icono nombre="check" [tamano]="18" />
+    <span>{{ aviso() }}</span>
+  </div>
+}
+
+@if (error()) {
+  <div class="aviso aviso-error mensaje-pagina" role="alert">
+    <app-icono nombre="alerta" [tamano]="18" />
+    <span>{{ error() }}</span>
+  </div>
+}
+
+<section class="tarjeta">
+  <div class="filtros">
+    <div class="campo">
+      <label for="fc-buscar">
+        Buscar por nombre, DNI o teléfono
+        <app-ayuda texto="Busca por nombre completo, DNI o teléfono." />
+      </label>
+      <div class="con-icono">
+        <app-icono nombre="buscar" [tamano]="17" />
+        <input id="fc-buscar" type="search" [value]="buscar()"
+               placeholder="Ej. Rosa Díaz, 41928653 o 987654321"
+               (input)="alBuscar($any($event.target).value)" />
+      </div>
+    </div>
+
+    <div class="campo">
+      <label for="fc-moneda">
+        Moneda
+        <app-ayuda texto="Filtra clientes en soles (PEN) o dólares (USD)." />
+      </label>
+      <select id="fc-moneda" [value]="moneda()" (change)="alCambiarMoneda($any($event.target).value)">
+        <option value="">Todas</option>
+        <option value="PEN">Soles (PEN)</option>
+        <option value="USD">Dólares (USD)</option>
+      </select>
+    </div>
+  </div>
+
+  <div class="barra-secundaria">
+    <label class="check-inactivos">
+      <input id="fc-inactivos" type="checkbox" [checked]="mostrarInactivos()"
+             (change)="alAlternarInactivos($any($event.target).checked)" />
+      <span>Mostrar clientes inactivos</span>
+    </label>
+    <span class="conteo">{{ clientes().length }} {{ clientes().length === 1 ? 'cliente' : 'clientes' }}</span>
+  </div>
+
+  @if (cargando()) {
+    <p class="estado-tabla">Cargando clientes…</p>
+  } @else if (clientes().length === 0) {
+    <p class="estado-tabla">No se encontraron clientes con los filtros seleccionados.</p>
+  } @else {
+    <div class="tabla-contenedor">
+      <table class="tabla">
+        <thead>
+          <tr>
+            <th>Cliente</th>
+            <th>DNI</th>
+            <th>Moneda</th>
+            <th class="num">Límite</th>
+            <th class="col-barra">Usado / Disponible</th>
+            <th>Ciclo / TEA</th>
+            <th>Estado</th>
+            <th class="col-acciones">Acciones</th>
+          </tr>
+        </thead>
+        <tbody>
+          @for (c of clientes(); track c.cliente_id) {
+            @let uso = porcentajeUso(c);
+            @let est = situacion(c);
+            <tr>
+              <td>
+                <div class="celda-cliente">
+                  <span class="avatar-icono">
+                    <app-icono nombre="usuario" [tamano]="16" />
+                  </span>
+                  <div>
+                    <strong>{{ c.nombres_apellidos }}</strong>
+                    <span class="sub">
+                      {{ c.telefono }}@if (c.username) { · {{ '@' + c.username }} }
+                    </span>
+                  </div>
+                </div>
+              </td>
+              <td class="mono">{{ c.dni }}</td>
+              <td>{{ c.moneda === 'PEN' ? 'Soles' : 'Dólares' }}</td>
+              <td class="num"><strong>{{ monto(c.moneda, c.limite_credito) }}</strong></td>
+              <td class="col-barra">
+                <div class="barra-montos">
+                  <span class="usado" [class.con-deuda]="+c.saldo_deudor > 0">
+                    {{ monto(c.moneda, c.saldo_deudor) }}
+                  </span>
+                  <span class="disponible">{{ monto(c.moneda, c.disponible) }}</span>
+                </div>
+                <div class="barra-pista" [attr.aria-label]="'Crédito usado ' + uso + '%'">
+                  <div class="barra-relleno"
+                       [class.medio]="uso >= 70 && uso < 95"
+                       [class.alto]="uso >= 95"
+                       [style.width.%]="uso"></div>
+                </div>
+              </td>
+              <td>
+                <div class="ciclo">Corte {{ c.dia_corte }} · Pago {{ c.dia_pago }}</div>
+                <span class="sub">TEA {{ tasa(c.tea_comp_porcentaje) }}</span>
+              </td>
+              <td>
+                <span class="badge" [class]="est.clase">{{ est.texto }}</span>
+              </td>
+              <td class="col-acciones">
+                <div class="acciones-fila">
+                  <button type="button" class="btn-icono" title="Editar cliente"
+                          [attr.aria-label]="'Editar ' + c.nombres_apellidos"
+                          (click)="editarCliente(c)">
+                    <app-icono nombre="editar" [tamano]="17" />
+                  </button>
+                  @if (c.estado === 1) {
+                    <button type="button" class="btn-icono peligro" title="Dar de baja"
+                            [attr.aria-label]="'Dar de baja ' + c.nombres_apellidos"
+                            (click)="confirmarBaja(c)">
+                      <app-icono nombre="baja" [tamano]="17" />
+                    </button>
+                  } @else {
+                    <button type="button" class="btn-icono exito" title="Reactivar cliente"
+                            [attr.aria-label]="'Reactivar ' + c.nombres_apellidos"
+                            (click)="confirmarReactivar(c)">
+                      <app-icono nombre="activar" [tamano]="17" />
+                    </button>
+                  }
+                </div>
+              </td>
+            </tr>
+          }
+        </tbody>
+      </table>
+    </div>
+  }
+</section>
+
+<app-cliente-formulario-dialogo (guardado)="alGuardar($event)" />
+<app-cliente-estado-dialogo (actualizado)="alCambiarEstado($event)" />
