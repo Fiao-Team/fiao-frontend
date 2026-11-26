@@ -43,13 +43,14 @@ export const ETIQUETA_FORMA_VENTA: Record<FormaVenta, string> = {
 /** Unidades de medida comunes en bodegas y negocios de barrio. */
 export const UNIDADES_MEDIDA = [
   'Unidad',
+  'Kg',
+  'Litro',
+  'Paquete',
   'Bolsa',
   'Botella',
-  'Caja',
-  'Kg',
   'Lata',
-  'Litro',
-  'Molde',
-  'Paquete',
+  'Caja',
+  'Docena',
   'Saco',
+  'Servicio',
 ] as const;

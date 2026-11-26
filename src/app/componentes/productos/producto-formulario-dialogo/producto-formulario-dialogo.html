@@ -56,16 +56,20 @@
         <div class="campo">
           <label for="p-unidad">
             Unidad de medida
-            <app-ayuda texto="Presentación en la que vendes el producto (Unidad, Bolsa, Kg, etc.)." />
+            <app-ayuda texto="Presentación en la que vendes el producto (Unidad, Kg, Bolsa, Litro, etc.)." />
           </label>
-          <input id="p-unidad" formControlName="unidad_medida" maxlength="15" list="lista-unidades"
-                 [class.invalido]="erroresCampo()['unidad_medida']"
-                 placeholder="Ej. Unidad" (input)="limpiarError('unidad_medida')" />
-          <datalist id="lista-unidades">
+          <select id="p-unidad" formControlName="unidad_medida" (change)="limpiarError('unidad_medida')">
             @for (u of unidades; track u) {
-              <option [value]="u"></option>
+              <option [value]="u">{{ u }}</option>
             }
-          </datalist>
+            <option value="OTRA">Otra…</option>
+          </select>
+          @if (formulario.controls.unidad_medida.value === 'OTRA') {
+            <input id="p-unidad-otra" class="unidad-otra" formControlName="unidad_otra" maxlength="15"
+                   [class.invalido]="erroresCampo()['unidad_medida']"
+                   placeholder="Escribe la unidad (ej. Molde, Plancha)"
+                   (input)="limpiarError('unidad_medida')" />
+          }
           @if (erroresCampo()['unidad_medida']) {
             <span class="error">{{ erroresCampo()['unidad_medida'] }}</span>
           }

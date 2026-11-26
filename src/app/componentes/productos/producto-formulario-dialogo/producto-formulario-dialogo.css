@@ -120,6 +120,10 @@ form {
   background: #fffafa;
 }
 
+.unidad-otra {
+  margin-top: 8px;
+}
+
 .con-prefijo {
   position: relative;
   display: flex;

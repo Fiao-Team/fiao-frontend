@@ -47,6 +47,7 @@ export class ProductoFormularioDialogo {
     categoria: [''],
     proveedor: [''],
     unidad_medida: ['Unidad'],
+    unidad_otra: [''],
     moneda: ['PEN' as Moneda],
     precio_contado: [''],
     precio_lista: [''],
@@ -63,6 +64,7 @@ export class ProductoFormularioDialogo {
       categoria: '',
       proveedor: '',
       unidad_medida: 'Unidad',
+      unidad_otra: '',
       moneda: 'PEN',
       precio_contado: '',
       precio_lista: '',
@@ -76,13 +78,15 @@ export class ProductoFormularioDialogo {
 
   abrirEditar(producto: ProductoItem): void {
     this.editando.set(producto);
+    const esConocida = (UNIDADES_MEDIDA as readonly string[]).includes(producto.unidad_medida);
     this.formulario.reset({
       nombre: producto.nombre,
       descripcion: '',
       marca: producto.marca ?? '',
       categoria: producto.categoria ?? '',
       proveedor: producto.proveedor ?? '',
-      unidad_medida: producto.unidad_medida,
+      unidad_medida: esConocida ? producto.unidad_medida : 'OTRA',
+      unidad_otra: esConocida ? '' : producto.unidad_medida,
       moneda: producto.moneda,
       precio_contado: String(producto.precio_contado),
       precio_lista: String(producto.precio_lista),
@@ -107,12 +111,17 @@ export class ProductoFormularioDialogo {
     });
   }
 
+  private unidadResuelta(): string {
+    const v = this.formulario.getRawValue();
+    return v.unidad_medida === 'OTRA' ? v.unidad_otra.trim() : v.unidad_medida.trim();
+  }
+
   protected validarLocal(): Record<string, string> {
     const v = this.formulario.getRawValue();
     const errores: Record<string, string> = {};
 
     const nombre = v.nombre.trim();
-    const unidad = v.unidad_medida.trim();
+    const unidad = this.unidadResuelta();
     const contado = Number(v.precio_contado);
     const lista = Number(v.precio_lista);
 
@@ -148,7 +157,7 @@ export class ProductoFormularioDialogo {
       marca: v.marca.trim() || null,
       categoria: v.categoria.trim() || null,
       proveedor: v.proveedor.trim() || null,
-      unidad_medida: v.unidad_medida.trim(),
+      unidad_medida: this.unidadResuelta(),
       moneda: v.moneda,
       precio_contado: Number(v.precio_contado).toFixed(2),
       precio_lista: Number(v.precio_lista).toFixed(2),
