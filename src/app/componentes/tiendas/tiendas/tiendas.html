@@ -1,0 +1,173 @@
+<div class="encabezado-pagina">
+  <div>
+    <h1>Tiendas</h1>
+    <p>Administra los negocios afiliados a la plataforma Fiao</p>
+  </div>
+  <div class="acciones-cabecera">
+    <app-como-usar titulo="Tiendas" [pasos]="pasos" />
+    <button type="button" class="btn btn-primario" (click)="nuevaTienda()">
+      <app-icono nombre="mas" [tamano]="18" />
+      Nueva tienda
+    </button>
+  </div>
+</div>
+
+<!-- Tarjetas KPI (Fig. 2) -->
+<section class="kpis" aria-label="Resumen de tiendas">
+  <article class="tarjeta kpi">
+    <span class="kpi-etiqueta">Total de tiendas</span>
+    <strong class="kpi-valor">{{ resumen().total }}</strong>
+    <span class="kpi-nota">En toda la plataforma</span>
+  </article>
+  <article class="tarjeta kpi kpi-activas">
+    <span class="kpi-etiqueta">Tiendas activas</span>
+    <strong class="kpi-valor">{{ resumen().activas }}</strong>
+    <span class="kpi-nota">Operando normalmente</span>
+  </article>
+  <article class="tarjeta kpi kpi-inactivas">
+    <span class="kpi-etiqueta">Tiendas inactivas</span>
+    <strong class="kpi-valor">{{ resumen().inactivas }}</strong>
+    <span class="kpi-nota">Dadas de baja temporalmente</span>
+  </article>
+</section>
+
+@if (aviso()) {
+  <div class="aviso aviso-exito mensaje-pagina" role="status">
+    <app-icono nombre="check" [tamano]="18" />
+    <span>{{ aviso() }}</span>
+  </div>
+}
+
+@if (error()) {
+  <div class="aviso aviso-error mensaje-pagina" role="alert">
+    <app-icono nombre="alerta" [tamano]="18" />
+    <span>{{ error() }}</span>
+  </div>
+}
+
+<!-- Filtros y tabla (Fig. 2) -->
+<section class="tarjeta">
+  <div class="filtros">
+    <div class="campo filtro-buscar">
+      <label for="f-buscar">
+        Buscar por nombre o RUC
+        <app-ayuda texto="Encuentra tiendas por su nombre comercial o RUC." />
+      </label>
+      <div class="con-icono">
+        <app-icono nombre="buscar" [tamano]="17" />
+        <input id="f-buscar" type="search" [value]="buscar()"
+               placeholder="Ej. Bodega Don Pepe o 20123456789"
+               (input)="alBuscar($any($event.target).value)" />
+      </div>
+    </div>
+
+    <div class="campo">
+      <label for="f-giro">
+        Giro
+        <app-ayuda texto="Muestra tiendas de un giro específico." />
+      </label>
+      <select id="f-giro" [value]="giro()" (change)="alCambiarGiro($any($event.target).value)">
+        <option value="">Todos los giros</option>
+        @for (g of giros(); track g) {
+          <option [value]="g">{{ g }}</option>
+        }
+      </select>
+    </div>
+
+    <div class="campo">
+      <label for="f-estado">
+        Estado
+        <app-ayuda texto="Filtra tiendas según su estado (Activas o Inactivas)." />
+      </label>
+      <select id="f-estado" [value]="estado()" (change)="alCambiarEstado($any($event.target).value)">
+        <option value="TODAS">Todas</option>
+        <option value="ACTIVA">Activas</option>
+        <option value="INACTIVA">Inactivas</option>
+      </select>
+    </div>
+  </div>
+
+  @if (cargando()) {
+    <p class="estado-tabla">Cargando tiendas…</p>
+  } @else if (tiendas().length === 0) {
+    <p class="estado-tabla">No se encontraron tiendas con los filtros seleccionados.</p>
+  } @else {
+    <div class="tabla-contenedor">
+      <table class="tabla">
+        <thead>
+          <tr>
+            <th>Nombre comercial</th>
+            <th>Giro</th>
+            <th>RUC</th>
+            <th>Dueño</th>
+            <th class="num">Clientes</th>
+            <th>Estado</th>
+            <th class="col-acciones">Acciones</th>
+          </tr>
+        </thead>
+        <tbody>
+          @for (t of tiendas(); track t.tienda_id) {
+            <tr>
+              <td>
+                <div class="celda-tienda">
+                  @if (t.logo_url) {
+                    <img class="logo" [src]="t.logo_url" [alt]="t.nombre_comercial" />
+                  } @else {
+                    <span class="logo-icono">
+                      <app-icono nombre="tienda" [tamano]="16" />
+                    </span>
+                  }
+                  <div>
+                    <strong>{{ t.nombre_comercial }}</strong>
+                    @if (t.distrito) {
+                      <span class="sub">{{ t.distrito }}</span>
+                    }
+                  </div>
+                </div>
+              </td>
+              <td>{{ t.giro || '—' }}</td>
+              <td class="mono">{{ t.ruc || '—' }}</td>
+              <td>
+                <div class="celda-dueno">
+                  <span>{{ t.dueno_nombres }}</span>
+                  <span class="sub">{{ '@' + t.dueno_username }}</span>
+                </div>
+              </td>
+              <td class="num">{{ t.clientes_count }}</td>
+              <td>
+                <span class="badge" [class.activa]="t.estado === 1" [class.inactiva]="t.estado !== 1">
+                  {{ t.estado === 1 ? 'Activa' : 'Inactiva' }}
+                </span>
+              </td>
+              <td class="col-acciones">
+                <div class="acciones-fila">
+                  <button type="button" class="btn-icono" title="Editar tienda"
+                          [attr.aria-label]="'Editar ' + t.nombre_comercial"
+                          (click)="editarTienda(t)">
+                    <app-icono nombre="editar" [tamano]="17" />
+                  </button>
+                  @if (t.estado === 1) {
+                    <button type="button" class="btn-icono peligro" title="Dar de baja"
+                            [attr.aria-label]="'Dar de baja ' + t.nombre_comercial"
+                            (click)="confirmarBaja(t)">
+                      <app-icono nombre="baja" [tamano]="17" />
+                    </button>
+                  } @else {
+                    <button type="button" class="btn-icono exito" title="Reactivar tienda"
+                            [attr.aria-label]="'Reactivar ' + t.nombre_comercial"
+                            (click)="confirmarReactivar(t)">
+                      <app-icono nombre="activar" [tamano]="17" />
+                    </button>
+                  }
+                </div>
+              </td>
+            </tr>
+          }
+        </tbody>
+      </table>
+    </div>
+  }
+</section>
+
+<app-tienda-formulario-dialogo [girosExistentes]="giros()" (guardado)="alGuardar($event)" />
+<app-tienda-estado-dialogo (actualizado)="alCambiarEstadoTienda($event)" />
