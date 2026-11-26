@@ -4,6 +4,7 @@ import { EnConstruccion } from './componentes/compartidos/en-construccion/en-con
 import { Layout } from './componentes/compartidos/layout/layout';
 import { IniciarSesion } from './componentes/autenticacion/iniciar-sesion/iniciar-sesion';
 import { InicioNegocioComponente } from './componentes/negocio/inicio-negocio/inicio-negocio';
+import { Tiendas } from './componentes/tiendas/tiendas/tiendas';
 import { NuevaVenta } from './componentes/ventas/nueva-venta/nueva-venta';
 import { soloRol, soloSinSesion } from './servicios/autenticacion-guard';
 
@@ -23,7 +24,10 @@ export const routes: Routes = [
     path: 'admin',
     component: Layout,
     canActivate: [soloRol('ADMIN_SISTEMA')],
-    children: [pendiente('tiendas', 'Tiendas', 'las Fig. 2 a 5'), { path: '', redirectTo: 'tiendas', pathMatch: 'full' }],
+    children: [
+      { path: 'tiendas', component: Tiendas, title: 'Tiendas · Fiao' },
+      { path: '', redirectTo: 'tiendas', pathMatch: 'full' },
+    ],
   },
 
   // Administrador del negocio (Fig. 6 a 27)

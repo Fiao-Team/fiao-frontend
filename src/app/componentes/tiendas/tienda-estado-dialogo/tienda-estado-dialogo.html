@@ -1,0 +1,44 @@
+<dialog #dialogo>
+  @if (tienda(); as t) {
+    <div class="encabezado" [class.peligro]="accion() === 'baja'" [class.exito]="accion() === 'activar'">
+      <span class="icono-circulo">
+        <app-icono [nombre]="accion() === 'baja' ? 'baja' : 'activar'" [tamano]="22" />
+      </span>
+      @if (accion() === 'baja') {
+        <h3>¿Dar de baja "{{ t.nombre_comercial }}"?</h3>
+      } @else {
+        <h3>¿Reactivar "{{ t.nombre_comercial }}"?</h3>
+      }
+    </div>
+
+    @if (accion() === 'baja') {
+      <p class="mensaje">
+        El dueño y sus clientes ya no podrán ingresar. Sus datos y deudas se conservan y puedes reactivarla después.
+      </p>
+    } @else {
+      <p class="mensaje">
+        El dueño y sus clientes podrán volver a ingresar a la plataforma con sus cuentas y datos conservados.
+      </p>
+    }
+
+    @if (error()) {
+      <div class="aviso aviso-error" role="alert">
+        <app-icono nombre="alerta" [tamano]="18" />
+        <span>{{ error() }}</span>
+      </div>
+    }
+
+    <div class="acciones">
+      <button type="button" class="btn btn-secundario" (click)="cerrar()">Cancelar</button>
+      @if (accion() === 'baja') {
+        <button type="button" class="btn btn-peligro" [disabled]="procesando()" (click)="confirmar()">
+          {{ procesando() ? 'Procesando…' : 'Dar de baja' }}
+        </button>
+      } @else {
+        <button type="button" class="btn btn-primario" [disabled]="procesando()" (click)="confirmar()">
+          {{ procesando() ? 'Procesando…' : 'Reactivar tienda' }}
+        </button>
+      }
+    </div>
+  }
+</dialog>
