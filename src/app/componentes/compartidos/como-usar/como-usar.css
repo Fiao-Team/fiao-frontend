@@ -1,12 +1,66 @@
 dialog {
-  width: min(460px, calc(100vw - 32px));
-  padding: 24px;
+  margin: 0 0 0 auto;
+  padding: 0;
+  width: min(390px, 100vw);
+  height: 100dvh;
+  max-height: 100dvh;
   border: 0;
-  border-radius: var(--fiao-radio);
+  border-radius: 0;
+  background: var(--fiao-superficie);
+  color: var(--fiao-texto);
+  box-shadow: -8px 0 32px rgba(11, 31, 58, 0.18);
 }
+
 dialog::backdrop {
   background: rgba(11, 31, 58, 0.45);
+  backdrop-filter: blur(1px);
 }
+
+.drawer {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  padding: 24px;
+  overflow-y: auto;
+}
+
+.cabecera {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 12px;
+  margin-bottom: 22px;
+}
+
+.cabecera h3 {
+  font-size: 19px;
+  line-height: 1.25;
+}
+
+.subtitulo {
+  margin: 4px 0 0;
+  font-size: 13.5px;
+  color: var(--fiao-texto-suave);
+}
+
+.btn-cerrar {
+  display: grid;
+  place-items: center;
+  width: 30px;
+  height: 30px;
+  padding: 0;
+  border: 1.5px solid var(--fiao-verde);
+  border-radius: 999px;
+  background: var(--fiao-superficie);
+  color: var(--fiao-verde-oscuro);
+  cursor: pointer;
+  flex-shrink: 0;
+}
+
+.btn-cerrar:hover {
+  background: var(--fiao-verde-claro);
+}
+
 .enlace {
   padding: 0;
   border: 0;
@@ -19,7 +73,58 @@ dialog::backdrop {
   text-underline-offset: 3px;
   cursor: pointer;
 }
-ol {
-  padding-left: 20px;
-  line-height: 1.6;
+
+.lista-pasos {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+}
+
+.lista-pasos li {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+}
+
+.numero {
+  display: grid;
+  place-items: center;
+  width: 30px;
+  height: 30px;
+  border-radius: 999px;
+  background: var(--fiao-verde-claro);
+  color: var(--fiao-verde-oscuro);
+  font-size: 13px;
+  font-weight: 700;
+  flex-shrink: 0;
+}
+
+.contenido strong {
+  display: block;
+  font-size: 14px;
+  color: var(--fiao-azul-900);
+  margin-bottom: 2px;
+}
+
+.contenido p {
+  margin: 0;
+  font-size: 13.5px;
+  line-height: 1.45;
+  color: var(--fiao-texto-suave);
+}
+
+.nota-final {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-top: 24px;
+  padding: 12px 14px;
+  border-radius: 10px;
+  background: #e6f7ed;
+  color: #157347;
+  font-size: 13px;
+  font-weight: 600;
 }

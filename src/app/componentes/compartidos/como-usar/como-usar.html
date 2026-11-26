@@ -2,12 +2,34 @@
         [class]="variante() === 'enlace' ? 'enlace' : 'btn btn-secundario'">
   {{ etiqueta() }}
 </button>
+
 <dialog #dialogo (click)="cerrarSiFondo($event)">
-  <h3>{{ titulo() }}</h3>
-  <ol>
-    @for (paso of pasos(); track $index) {
-      <li>{{ paso }}</li>
-    }
-  </ol>
-  <button type="button" class="btn btn-primario" (click)="dialogo.close()">Entendido</button>
+  <div class="drawer">
+    <div class="cabecera">
+      <div>
+        <h3>¿Cómo usar {{ titulo() }}?</h3>
+        <p class="subtitulo">Sigue estos pasos para completar tu tarea.</p>
+      </div>
+      <button type="button" class="btn-cerrar" aria-label="Cerrar ayuda" (click)="dialogo.close()">
+        <app-icono nombre="quitar" [tamano]="16" />
+      </button>
+    </div>
+
+    <ol class="lista-pasos">
+      @for (paso of pasos(); track $index) {
+        <li>
+          <span class="numero">{{ $index + 1 }}</span>
+          <div class="contenido">
+            <strong>Paso {{ $index + 1 }}</strong>
+            <p>{{ paso }}</p>
+          </div>
+        </li>
+      }
+    </ol>
+
+    <div class="nota-final">
+      <app-icono nombre="check" [tamano]="16" />
+      <span>{{ nota() }}</span>
+    </div>
+  </div>
 </dialog>

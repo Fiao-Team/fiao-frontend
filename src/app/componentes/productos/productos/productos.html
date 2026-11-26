@@ -129,7 +129,7 @@
               <td>{{ p.moneda }}</td>
               <td class="num">{{ formatoPrecio(p.moneda, p.precio_contado) }}</td>
               <td class="num"><strong>{{ formatoPrecio(p.moneda, p.precio_lista) }}</strong></td>
-              <td>{{ etiquetasForma[p.forma_venta_credito] }}</td>
+              <td><span class="pill-modalidad">{{ etiquetasForma[p.forma_venta_credito] }}</span></td>
               <td>
                 <span class="badge" [class.activo]="p.estado === 1" [class.inactivo]="p.estado !== 1">
                   {{ p.estado === 1 ? 'Activo' : 'Inactivo' }}

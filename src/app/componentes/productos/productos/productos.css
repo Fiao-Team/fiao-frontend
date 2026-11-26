@@ -113,6 +113,17 @@
   font-weight: 600;
 }
 
+.pill-modalidad {
+  display: inline-block;
+  padding: 3px 10px;
+  border-radius: 999px;
+  background: #eaf2fd;
+  color: #1d4f91;
+  font-size: 12px;
+  font-weight: 600;
+  white-space: nowrap;
+}
+
 .badge.activo {
   background: var(--fiao-verde-claro);
   color: var(--fiao-verde-oscuro);
